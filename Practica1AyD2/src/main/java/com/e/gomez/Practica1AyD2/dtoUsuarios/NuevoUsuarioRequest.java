@@ -2,16 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dtoUsuarios;
+package com.e.gomez.Practica1AyD2.dtoUsuarios;
 
 import lombok.Value;
-import modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 
 /**
  *
  * @author eiler
  */
-@Value
+@AllArgsConstructor
+@Getter
 public class NuevoUsuarioRequest {
      String nombre;
      String username;
@@ -21,6 +25,7 @@ public class NuevoUsuarioRequest {
      String estado;
      Integer id_rol;
      
+
      
     public EntidadUsuario crearEntidad(){
         EntidadUsuario nuevaEntidad= new EntidadUsuario();
@@ -29,7 +34,7 @@ public class NuevoUsuarioRequest {
         nuevaEntidad.setApellido(getApellido());
         nuevaEntidad.setCorreo(getCorreo());
         nuevaEntidad.setEstado("ACTIVO");
-        
+        nuevaEntidad.setPassword_hash(getPassword());
         return nuevaEntidad;
     }
 }

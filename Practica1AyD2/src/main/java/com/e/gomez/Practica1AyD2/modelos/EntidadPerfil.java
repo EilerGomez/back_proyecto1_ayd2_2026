@@ -2,9 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modelos;
+package com.e.gomez.Practica1AyD2.modelos;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,15 +17,22 @@ import lombok.NoArgsConstructor;
  *
  * @author eiler
  */
-@Entity(name = "Rol")
-@Table(name = "roles")
+@Entity(name="Perfil")
+@Table(name = "perfiles")
 @Data
 @NoArgsConstructor
-public class EntidadRol {
+public class EntidadPerfil {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name="usuario_id")
+    private Integer usuarioId;
     @Column
-    private String nombre;
-    
+    private String foto_url;
+    @Column
+    private String hobbies;
+    @Column
+    private String intereses;
+    @Column
+    private String descripcion;
+    @Column
+    private String gustos;
 }

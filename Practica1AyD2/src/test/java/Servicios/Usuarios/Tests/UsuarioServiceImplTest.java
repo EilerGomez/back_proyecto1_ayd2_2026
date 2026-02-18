@@ -4,14 +4,14 @@
  */
 package Servicios.Usuarios.Tests;
 
-import dtoUsuarios.NuevoUsuarioRequest;
-import dtoUsuarios.UsuarioResponse;
-import dtoUsuarios.UsuarioUpdateRequest;
-import excepciones.ExcepcionEntidadDuplicada;
-import excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.NuevoUsuarioRequest;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioUpdateRequest;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.util.List;
 import java.util.Optional;
-import modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,13 +27,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
-import repositorios.PerfilRepositorio;
-import repositorios.RolRepositorio;
-import repositorios.UsuarioRepositorio;
-import repositorios.UsuarioRolRepositorio;
-import servicios.UsuarioService;
-import servicios.UsuarioServiceImpl;
-import utilities.GeneratePassword;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RolRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.UsuarioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.UsuarioRolRepositorio;
+import com.e.gomez.Practica1AyD2.servicios.UsuarioService;
+import com.e.gomez.Practica1AyD2.servicios.UsuarioServiceImpl;
+import com.e.gomez.Practica1AyD2.utilities.GeneratePassword;
 import static net.bytebuddy.matcher.ElementMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -58,11 +58,14 @@ public class UsuarioServiceImplTest {
     private static final String password = "Passw";
     private static final String estado = "ACTIVO";
     private static final Integer id_rol = 1;
+    private static final Integer id = 1;
+    
+    private final EntidadUsuario usuario = new EntidadUsuario(id, username, nombre, apellido, correo, password, estado);
 
     
     @Test
     void crearUsuario_lanzaExcepcion_siCorreoExiste() {
-        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre,username,apellido,correo,password,estado,id_rol);
+        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre, username, apellido,correo,password, estado,id_rol);
         when(usuarioRepositorio.existsByCorreo(correo)).thenReturn(true);
 
         Assertions.assertThrows(ExcepcionEntidadDuplicada.class, 
@@ -72,7 +75,7 @@ public class UsuarioServiceImplTest {
     
     @Test
     void crearUsuario_lanzaExcepcion_siUsernameExiste(){
-        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre,username,apellido,correo,password,estado,id_rol);
+        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre, username, apellido,correo,password, estado,id_rol);
         
         when(usuarioRepositorio.existsByUsername(username)).thenReturn(true);
         
@@ -82,7 +85,7 @@ public class UsuarioServiceImplTest {
     
     @Test
     void crearUsuario_No_existeRol(){
-        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre,username,apellido,correo,password,estado,id_rol);
+        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre, username, apellido,correo,password, estado,id_rol);
         
         when(rolRepositorio.existsById(id_rol)).thenReturn(false);
         
@@ -93,7 +96,7 @@ public class UsuarioServiceImplTest {
     @Test
     void CrearUsuarioSinErrores() throws ExcepcionEntidadDuplicada, ExcepcionNoExiste{
         //Arrage
-        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre,username,apellido,correo,password,estado,id_rol);
+        NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre, username, apellido,correo,password, estado,id_rol);
         
         when(usuarioRepositorio.existsByCorreo(correo)).thenReturn(false);
         when(usuarioRepositorio.existsByUsername(username)).thenReturn(false);
@@ -130,12 +133,12 @@ public class UsuarioServiceImplTest {
         
         //verificacion ceracion de perfil
         verify(perfilRepositorio, Mockito.times(1))
-            .save(Mockito.argThat(p -> p.getUsuario_id().equals(100)));
+            .save(Mockito.argThat(p -> p.getUsuarioId().equals(100)));
         
         
         //verificacion creacion del usuario roles
         verify(usuarioRolRepositorio, Mockito.times(1))
-            .save(Mockito.any(modelos.Entidad_Usuario_Rol.class));
+            .save(Mockito.any(com.e.gomez.Practica1AyD2.modelos.Entidad_Usuario_Rol.class));
         
     }
       private EntidadUsuario usuarioBase(Integer id) {
@@ -151,11 +154,14 @@ public class UsuarioServiceImplTest {
     
     @Test
     void findAll_devuelveLista() {
+        //Arrage
         List<EntidadUsuario> lista = List.of(usuarioBase(1), usuarioBase(2));
         when(usuarioRepositorio.findAll()).thenReturn(lista);
 
+        //ACT
         List<EntidadUsuario> res = service.findAll();
 
+        //Assert
         assertEquals(2, res.size());
         verify(usuarioRepositorio, times(1)).findAll();
         verifyNoMoreInteractions(usuarioRepositorio);
@@ -202,8 +208,8 @@ public class UsuarioServiceImplTest {
 
         when(usuarioRepositorio.findById(id)).thenReturn(Optional.of(u));
 
-        when(usuarioRepositorio.existeUsuarioAActualizarPorUsername(u.getId(), u.getUsername())).thenReturn(false);
-        when(usuarioRepositorio.existeUsuarioAActualizarPorCorreo(u.getId(), u.getCorreo())).thenReturn(false);
+        when(usuarioRepositorio.existeUsuarioAActualizarPorUsername(id, req.getUsername())).thenReturn(false);
+        when(usuarioRepositorio.existeUsuarioAActualizarPorCorreo(id, req.getCorreo())).thenReturn(false);
 
         when(usuarioRepositorio.save(any(EntidadUsuario.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -237,7 +243,7 @@ public class UsuarioServiceImplTest {
 
         when(usuarioRepositorio.findById(id)).thenReturn(Optional.of(u));
 
-        when(usuarioRepositorio.existeUsuarioAActualizarPorUsername(u.getId(), u.getUsername())).thenReturn(true);
+        when(usuarioRepositorio.existeUsuarioAActualizarPorUsername(id, req.getUsername())).thenReturn(true);
 
         ExcepcionEntidadDuplicada ex = assertThrows(
                 ExcepcionEntidadDuplicada.class,
@@ -260,8 +266,8 @@ public class UsuarioServiceImplTest {
 
         when(usuarioRepositorio.findById(id)).thenReturn(Optional.of(u));
 
-        when(usuarioRepositorio.existeUsuarioAActualizarPorUsername(u.getId(), u.getUsername())).thenReturn(false);
-        when(usuarioRepositorio.existeUsuarioAActualizarPorCorreo(u.getId(), u.getCorreo())).thenReturn(true);
+        when(usuarioRepositorio.existeUsuarioAActualizarPorUsername(id, req.getUsername())).thenReturn(false);
+        when(usuarioRepositorio.existeUsuarioAActualizarPorCorreo(id, req.getCorreo())).thenReturn(true);
 
         ExcepcionEntidadDuplicada ex = assertThrows(
                 ExcepcionEntidadDuplicada.class,

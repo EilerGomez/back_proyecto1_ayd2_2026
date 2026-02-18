@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package repositorios;
+package com.e.gomez.Practica1AyD2.repositorios;
 
 import java.util.List;
-import modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,16 +25,16 @@ public interface UsuarioRepositorio extends JpaRepository<EntidadUsuario,Integer
     List<EntidadUsuario> findByUsername(String username);
     boolean existsByUsername (String username);
     
-    List<EntidadUsuario> getUsuarios();
+    List<EntidadUsuario> findAll();
     
-    EntidadUsuario getUsuario(Integer id);
+    Optional<EntidadUsuario> findById(Integer id);
     
     
-    @Query("SELECT CASE WHEN COUNT(us) > 0 THEN true ELSE false END FROM usuarios us WHERE us.id <> :id AND us.username = :username")
+    @Query("SELECT CASE WHEN COUNT(us) > 0 THEN true ELSE false END FROM Usuario us WHERE us.id <> :id AND us.username = :username")
     boolean existeUsuarioAActualizarPorUsername(@Param("id") Integer id, @Param("username") String username);
     
     
-    @Query("SELECT CASE WHEN COUNT(us) > 0 THEN true ELSE false END FROM usuarios us WHERE us.id <> :id AND us.correo = :correo")
+    @Query("SELECT CASE WHEN COUNT(us) > 0 THEN true ELSE false END FROM Usuario us WHERE us.id <> :id AND us.correo = :correo")
     boolean existeUsuarioAActualizarPorCorreo(@Param("id") Integer id, @Param("correo") String correo);
 
 }

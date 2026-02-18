@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package servicios;
+package com.e.gomez.Practica1AyD2.servicios;
 
-import dtoUsuarios.NuevoUsuarioRequest;
-import dtoUsuarios.UsuarioResponse;
-import dtoUsuarios.UsuarioUpdateRequest;
-import excepciones.ExcepcionEntidadDuplicada;
-import excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.NuevoUsuarioRequest;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioUpdateRequest;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.util.List;
-import modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 
 /**
  *

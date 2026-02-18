@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dtoUsuarios;
+package com.e.gomez.Practica1AyD2.dtoUsuarios;
 
 import lombok.Data;
-import modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 
 /**
  *
@@ -13,12 +13,14 @@ import modelos.EntidadUsuario;
  */
 @Data
 public class UsuarioResponse {
-    private int id;
+    private Integer id;
     private String nombre;
     private String username;
     private String apellido;
     private String correo;
     private String estado;
+    
+     
     
     public UsuarioResponse(EntidadUsuario entidadUsuario){
         this.id=entidadUsuario.getId();

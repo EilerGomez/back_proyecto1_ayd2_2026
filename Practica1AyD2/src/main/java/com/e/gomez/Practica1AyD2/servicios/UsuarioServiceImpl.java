@@ -2,27 +2,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package servicios;
+package com.e.gomez.Practica1AyD2.servicios;
 
-import dtoUsuarios.NuevoUsuarioRequest;
-import dtoUsuarios.UsuarioResponse;
-import dtoUsuarios.UsuarioUpdateRequest;
-import excepciones.ExcepcionEntidadDuplicada;
-import excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.NuevoUsuarioRequest;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
+import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioUpdateRequest;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.util.List;
 import lombok.Value;
-import modelos.EntidadPerfil;
-import modelos.EntidadRol;
-import modelos.EntidadUsuario;
-import modelos.Entidad_Usuario_Rol;
-import modelos.UsuarioRolId;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRol;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.Entidad_Usuario_Rol;
+import com.e.gomez.Practica1AyD2.modelos.UsuarioRolId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repositorios.PerfilRepositorio;
-import repositorios.RolRepositorio;
-import repositorios.UsuarioRepositorio;
-import repositorios.UsuarioRolRepositorio;
-import utilities.GeneratePassword;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RolRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.UsuarioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.UsuarioRolRepositorio;
+import com.e.gomez.Practica1AyD2.utilities.GeneratePassword;
 
 /**
  *
@@ -76,7 +76,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         // crear perfil con usuario_id
         EntidadPerfil perfil = new EntidadPerfil();
-        perfil.setUsuario_id(usuarioGuardado.getId());
+        perfil.setUsuarioId(usuarioGuardado.getId());
         perfilRepository.save(perfil);
 
         // crear registro en usuario_roles
@@ -103,8 +103,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse actializarUsuario(Integer id, UsuarioUpdateRequest dataAActualizar) throws ExcepcionEntidadDuplicada, ExcepcionNoExiste {
         EntidadUsuario usuarioUpdate = getById(id);
         
-        boolean existUsername = uRepositorio.existeUsuarioAActualizarPorUsername(usuarioUpdate.getId(), usuarioUpdate.getUsername());
-        boolean existCorreo =uRepositorio.existeUsuarioAActualizarPorCorreo(usuarioUpdate.getId(), usuarioUpdate.getCorreo());
+        boolean existUsername = uRepositorio.existeUsuarioAActualizarPorUsername(usuarioUpdate.getId(), dataAActualizar.getUsername());
+        boolean existCorreo =uRepositorio.existeUsuarioAActualizarPorCorreo(usuarioUpdate.getId(), dataAActualizar.getCorreo());
         
         if(existUsername){
             throw new ExcepcionEntidadDuplicada("EL Username ya existe");
