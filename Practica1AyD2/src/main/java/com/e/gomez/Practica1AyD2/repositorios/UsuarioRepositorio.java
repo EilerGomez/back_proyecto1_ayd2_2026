@@ -36,5 +36,8 @@ public interface UsuarioRepositorio extends JpaRepository<EntidadUsuario,Integer
     
     @Query("SELECT CASE WHEN COUNT(us) > 0 THEN true ELSE false END FROM Usuario us WHERE us.id <> :id AND us.correo = :correo")
     boolean existeUsuarioAActualizarPorCorreo(@Param("id") Integer id, @Param("correo") String correo);
+    
+    Optional<EntidadUsuario> findByUsernameIgnoreCaseOrCorreoIgnoreCase(String username, String correo);
+
 
 }

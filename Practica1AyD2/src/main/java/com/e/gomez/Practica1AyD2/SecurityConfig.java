@@ -12,11 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
-@EnableWebSecurity
+
 public class SecurityConfig {
 
-    @Bean
+    /*@Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
@@ -25,6 +24,6 @@ public class SecurityConfig {
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
-    }
+    }*/
 }
 
