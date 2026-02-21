@@ -44,6 +44,7 @@ public class SecurityConfigJwt {
                         "/v1/auth/login",
                         "/v1/auth/logout"
                 ).permitAll()
+                .requestMatchers("/v1/revistas/**").hasAnyRole("ADMIN", "EDITOR")
                 .anyRequest().authenticated()
         );
 

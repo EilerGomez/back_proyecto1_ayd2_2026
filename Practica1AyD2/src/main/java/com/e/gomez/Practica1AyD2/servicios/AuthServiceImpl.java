@@ -15,10 +15,12 @@ import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioCompletoResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionCredencialesInvalidas;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRol;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.modelos.Entidad_Usuario_Rol;
+import com.e.gomez.Practica1AyD2.repositorios.CarteraRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.RolRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.UsuarioRepositorio;
@@ -40,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final TokenBlacklistService blacklist;
     private final PerfilRepositorio perfilRepositorio;
+    private final CarteraRepositorio carteraRepositorio;
 
     public AuthServiceImpl(
             UsuarioRepositorio usuarioRepositorio,
@@ -48,7 +51,8 @@ public class AuthServiceImpl implements AuthService {
             BCryptPasswordEncoder encoder,
             JwtService jwtService,
             TokenBlacklistService blacklist,
-            PerfilRepositorio perfilRepositorio
+            PerfilRepositorio perfilRepositorio,
+            CarteraRepositorio carteraRepositorio
     ) {
         this.usuarioRepositorio = usuarioRepositorio;
         this.usuarioRolRepositorio = usuarioRolRepositorio;
@@ -57,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
         this.jwtService = jwtService;
         this.blacklist = blacklist;
         this.perfilRepositorio=perfilRepositorio;
+        this.carteraRepositorio=carteraRepositorio;
     }
 
     @Override
@@ -93,13 +98,18 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ExcepcionNoExiste("Rol no encontrado"));
 
         String token = jwtService.generateToken(user.getId(), user.getUsername(), rol.getNombre());
-        EntidadPerfil perfil = perfilRepositorio.findByUsuarioId(user.getId());
+        
+        EntidadPerfil perfil = perfilRepositorio.findByUsuarioId(user.getId())
+                 .orElseThrow(() -> new ExcepcionNoExiste("Perfil no encontrado para usuarioId: " + user.getId()));
+        
+        EntidadCartera cartera = carteraRepositorio.findByUsuarioId(user.getId())
+                .orElseThrow(()-> new ExcepcionNoExiste("Cartera no encontrada para el usuario: "+user.getId()));
         
         return new LoginResponse(
                 token,
                 "Bearer",
                 jwtService.getExpirationMs(),
-                new UsuarioCompletoResponse(new UsuarioResponse(user), perfil, rol)
+                new UsuarioCompletoResponse(new UsuarioResponse(user), perfil, rol,cartera)
         );
     }
 

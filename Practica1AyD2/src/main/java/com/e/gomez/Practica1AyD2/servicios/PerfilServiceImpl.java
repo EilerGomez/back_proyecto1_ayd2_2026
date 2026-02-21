@@ -4,7 +4,9 @@
  */
 package com.e.gomez.Practica1AyD2.servicios;
 
+import com.e.gomez.Practica1AyD2.dtoUsuarios.NuevoPerfilRequest;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +42,24 @@ public class PerfilServiceImpl implements PerfilService{
     }
 
     @Override
-    public EntidadPerfil findByUsuarioId(Integer usuarioId) {
-        return repository.findByUsuarioId(usuarioId);
+    public EntidadPerfil findByUsuarioId(Integer usuarioId) throws ExcepcionNoExiste{
+        return repository.findByUsuarioId(usuarioId).orElseThrow(() -> new ExcepcionNoExiste("Perfil no encontrado para usuarioId: " + usuarioId));
+    }
+
+    @Override
+    public EntidadPerfil updatePerfil(Integer usuarioId, NuevoPerfilRequest nuevoPerfil)throws ExcepcionNoExiste {
+         EntidadPerfil perfil = repository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new ExcepcionNoExiste("Perfil no encontrado para usuarioId: " + usuarioId));
+
+        // Actualización tipo PATCH: solo pisa lo que venga no-nulo
+        if (nuevoPerfil.getFoto_url() != null) perfil.setFoto_url(nuevoPerfil.getFoto_url());
+        if (nuevoPerfil.getHobbies() != null) perfil.setHobbies(nuevoPerfil.getHobbies());
+        if (nuevoPerfil.getIntereses() != null) perfil.setIntereses(nuevoPerfil.getIntereses());
+        if (nuevoPerfil.getDescripcion() != null) perfil.setDescripcion(nuevoPerfil.getDescripcion());
+        if (nuevoPerfil.getGustos() != null) perfil.setGustos(nuevoPerfil.getGustos());
+
+        return repository.save(perfil);
+        
     }
     
 }

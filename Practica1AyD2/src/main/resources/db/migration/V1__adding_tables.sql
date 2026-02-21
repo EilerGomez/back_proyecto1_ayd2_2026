@@ -7,7 +7,7 @@
  * Created: 16 feb 2026
  */
 
--- USUARIOS ROLES Y PERFIL
+-- USUARIOS ROLES, PERFIL Y CARTERA DIGITAL
 CREATE TABLE roles (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL UNIQUE-- ADMIN, EDITOR, SUSCRIPTOR, ANUNCIANTE
@@ -41,10 +41,34 @@ CREATE TABLE perfiles (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE carteras (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT UNIQUE,
+    saldo DECIMAL(12,2) DEFAULT 0.00,
+    moneda CHAR(3) DEFAULT 'GTQ',
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE transacciones_cartera (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    cartera_id INT,
+    tipo VARCHAR(16), -- 'RECARGA','COMPRA_ANUNCIO','BLOQUEO_ANUNCIO','PAGO_REVISTA','AJUSTE'
+    direccion VARCHAR(7), -- 'CREDITO','DEBITO'
+    monto DECIMAL(12,2),
+    referencia_tipo VARCHAR(50),
+    referencia_id INT,
+    nota VARCHAR(255),
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_registrada_usuario DATE,
+    FOREIGN KEY (cartera_id) REFERENCES carteras(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 -- INSERTAR UN USUARIO ADMINISTRADOR DEL SISTEMA
 insert into roles (nombre) values ("ADMIN"),("EDITOR"),("SUSCRIPTOR"),("ANUNCIANTE");
 
-insert into usuarios(id, nombre,username,apellido,correo,password_hash) values (1,"administrador","admin1","1","gomezeiler250@gmail.com", "$2a$10$Ip/ef5xWRE7p5uMsP2qwUuks1.P1xwjiI50iIgDAbN2KNS6McxU2u");
+insert into usuarios(id, nombre,username,apellido,correo,password_hash) values (1,"administrador","admin1","1","gomezeiler250@gmail.com", "$2a$10$maFJe5RGwJUuIArBS9brxO.ZC6B1P4dzau7ZdxDiAJUJ.9emxnpEy");-- admin123
 insert into perfiles (usuario_id) values (1);
 insert into usuario_roles(usuario_id,rol_id) values (1,1);
+insert into carteras(usuario_id) values(1);

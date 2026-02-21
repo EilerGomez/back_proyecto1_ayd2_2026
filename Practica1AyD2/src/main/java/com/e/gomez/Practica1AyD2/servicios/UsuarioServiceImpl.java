@@ -9,6 +9,7 @@ import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioUpdateRequest;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
 import java.util.List;
 import lombok.Value;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
@@ -16,6 +17,7 @@ import com.e.gomez.Practica1AyD2.modelos.EntidadRol;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.modelos.Entidad_Usuario_Rol;
 import com.e.gomez.Practica1AyD2.modelos.UsuarioRolId;
+import com.e.gomez.Practica1AyD2.repositorios.CarteraRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
@@ -23,6 +25,8 @@ import com.e.gomez.Practica1AyD2.repositorios.RolRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.UsuarioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.UsuarioRolRepositorio;
 import com.e.gomez.Practica1AyD2.utilities.GeneratePassword;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -35,14 +39,17 @@ public class UsuarioServiceImpl implements UsuarioService {
    private final RolRepositorio rolRepository;
    private final PerfilRepositorio perfilRepository;
    private final UsuarioRolRepositorio usuarioRolRepository;
+   private final CarteraRepositorio carteraRepositorio;
    private GeneratePassword genP;
    @Autowired
-   public UsuarioServiceImpl(UsuarioRepositorio urepo, RolRepositorio rolrepo, PerfilRepositorio perfilrepo, UsuarioRolRepositorio usuariorolrepo){
+   public UsuarioServiceImpl(UsuarioRepositorio urepo, RolRepositorio rolrepo, PerfilRepositorio perfilrepo, 
+           UsuarioRolRepositorio usuariorolrepo,CarteraRepositorio carteraRepositorio){
        this.uRepositorio=urepo;
        this.rolRepository=rolrepo;
        this.perfilRepository=perfilrepo;
        this.usuarioRolRepository=usuariorolrepo;
        this.genP= new GeneratePassword();
+       this.carteraRepositorio=carteraRepositorio;
    }
 
     @Override
@@ -69,6 +76,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw  new ExcepcionNoExiste("El Rol no existe");
         }
         
+        
         // crear usuario
         EntidadUsuario u = nuevoU.crearEntidad();
         u.setPassword_hash(genP.hashPassword(nuevoU.getPassword()));
@@ -83,6 +91,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         UsuarioRolId pk = new UsuarioRolId(usuarioGuardado.getId(), nuevoU.getId_rol());
         Entidad_Usuario_Rol ur = new Entidad_Usuario_Rol(pk);
         usuarioRolRepository.save(ur);
+        
+        //crear cartera del usuario
+        EntidadCartera cartera = new EntidadCartera();
+        cartera.setUsuarioId(usuarioGuardado.getId());
+        cartera.setFechaCreacion(LocalDateTime.now());
+        cartera.setSaldo(BigDecimal.ZERO);
+        cartera.setMoneda("GTQ");
+        carteraRepositorio.save(cartera);
 
         return usuarioGuardado;
     }

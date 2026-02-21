@@ -4,7 +4,9 @@
  */
 package com.e.gomez.Practica1AyD2.servicios;
 
+import com.e.gomez.Practica1AyD2.dtoUsuarios.NuevoPerfilRequest;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 
 /**
@@ -13,5 +15,6 @@ import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
  */
 public interface PerfilService {
     EntidadPerfil crearPerfil (Integer idUsuario) throws ExcepcionEntidadDuplicada;
-    EntidadPerfil findByUsuarioId(Integer usuarioId);
+    EntidadPerfil findByUsuarioId(Integer usuarioId)throws ExcepcionNoExiste;
+    EntidadPerfil updatePerfil(Integer usuarioId, NuevoPerfilRequest nuevoPerfil)throws ExcepcionNoExiste;
 }

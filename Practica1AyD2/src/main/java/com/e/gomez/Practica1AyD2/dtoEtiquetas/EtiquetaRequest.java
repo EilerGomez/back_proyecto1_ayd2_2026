@@ -2,21 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.e.gomez.Practica1AyD2.dtoAuth;
+package com.e.gomez.Practica1AyD2.dtoEtiquetas;
 
 /**
  *
  * @author eiler
  */
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Value;
 
-@Getter @Setter
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Data
 @NoArgsConstructor
-public class LoginRequest {
-    String identificador; // username o correo
-    String password;
+@AllArgsConstructor
+public class EtiquetaRequest {
+    private String nombre;
 }

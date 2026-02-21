@@ -10,10 +10,12 @@ import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioUpdateRequest;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRol;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
+import com.e.gomez.Practica1AyD2.servicios.CarteraService;
 import com.e.gomez.Practica1AyD2.servicios.PerfilService;
 import com.e.gomez.Practica1AyD2.servicios.RolService;
 import com.e.gomez.Practica1AyD2.servicios.UsuarioService;
@@ -44,12 +46,14 @@ public class UsuarioController {
     private final UsuarioService servicio;
     private final PerfilService servicioPerfil;
     private final RolService rolService;
+    private final CarteraService carteraService;
     
     @Autowired
-    public UsuarioController(UsuarioService servicioU, PerfilService servicioP, RolService rs){
+    public UsuarioController(UsuarioService servicioU, PerfilService servicioP, RolService rs,CarteraService carteraService){
         this.servicio=servicioU;
         this.servicioPerfil = servicioP;
         this.rolService=rs;
+        this.carteraService=carteraService;
     }
     
     @PostMapping()
@@ -58,7 +62,8 @@ public class UsuarioController {
         usuarioNuevo = new UsuarioResponse(servicio.crearUsuario(nuevoU));
         EntidadPerfil perfil= servicioPerfil.findByUsuarioId(usuarioNuevo.getId());
         EntidadRol rol = rolService.traerRolDeUsuario(usuarioNuevo.getId());
-        UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioNuevo, perfil, rol);
+        EntidadCartera cartera = carteraService.obtenerPorUsuario(usuarioNuevo.getId());
+        UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioNuevo, perfil, rol,cartera);
        return  ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
@@ -70,8 +75,9 @@ public class UsuarioController {
             UsuarioResponse usuarioDto = new UsuarioResponse(usuario);
             EntidadPerfil perfil = servicioPerfil.findByUsuarioId(usuario.getId());
             EntidadRol rol = rolService.traerRolDeUsuario(usuario.getId()); // puede lanzar
+            EntidadCartera cartera = carteraService.obtenerPorUsuario(usuario.getId());
 
-            respuesta.add(new UsuarioCompletoResponse(usuarioDto, perfil, rol));
+            respuesta.add(new UsuarioCompletoResponse(usuarioDto, perfil, rol,cartera));
         }
 
         return ResponseEntity.ok(respuesta);
@@ -87,8 +93,10 @@ public class UsuarioController {
 
         EntidadPerfil perfil = servicioPerfil.findByUsuarioId(id);
         EntidadRol rol = rolService.traerRolDeUsuario(id);
+        EntidadCartera cartera = carteraService.obtenerPorUsuario(usuario.getId());
 
-        UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioDto, perfil, rol);
+
+        UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioDto, perfil, rol,cartera);
         return ResponseEntity.ok(response);
     }
     
@@ -101,8 +109,9 @@ public class UsuarioController {
 
         EntidadPerfil perfil = servicioPerfil.findByUsuarioId(id);
         EntidadRol rol = rolService.traerRolDeUsuario(id);
+        EntidadCartera cartera = carteraService.obtenerPorUsuario(id);
 
-        UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioActualizado, perfil, rol);
+        UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioActualizado, perfil, rol,cartera);
         return ResponseEntity.ok(response);
     }
     

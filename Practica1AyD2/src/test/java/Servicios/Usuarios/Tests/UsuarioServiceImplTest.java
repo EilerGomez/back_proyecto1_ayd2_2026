@@ -9,9 +9,12 @@ import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioUpdateRequest;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
 import java.util.List;
 import java.util.Optional;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.modelos.Entidad_Usuario_Rol;
+import com.e.gomez.Practica1AyD2.repositorios.CarteraRepositorio;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,6 +52,7 @@ public class UsuarioServiceImplTest {
     @Mock PerfilRepositorio perfilRepositorio;
     @Mock UsuarioRolRepositorio usuarioRolRepositorio;
     @Mock GeneratePassword gen;
+    @Mock CarteraRepositorio carteraRepositorio;
     
     @InjectMocks UsuarioServiceImpl service;
     private static final String nombre = "Juan";
@@ -65,7 +69,9 @@ public class UsuarioServiceImplTest {
     
     @Test
     void crearUsuario_lanzaExcepcion_siCorreoExiste() {
+        
         NuevoUsuarioRequest req = new NuevoUsuarioRequest(nombre, username, apellido,correo,password, estado,id_rol);
+        
         when(usuarioRepositorio.existsByCorreo(correo)).thenReturn(true);
 
         Assertions.assertThrows(ExcepcionEntidadDuplicada.class, 
@@ -138,7 +144,11 @@ public class UsuarioServiceImplTest {
         
         //verificacion creacion del usuario roles
         verify(usuarioRolRepositorio, Mockito.times(1))
-            .save(Mockito.any(com.e.gomez.Practica1AyD2.modelos.Entidad_Usuario_Rol.class));
+            .save(Mockito.any(Entidad_Usuario_Rol.class));
+        
+        //verificar la creacion de la cartera
+        verify(carteraRepositorio, Mockito.times(1))
+                .save(Mockito.argThat(c -> c.getUsuarioId().equals(100)));
         
     }
       private EntidadUsuario usuarioBase(Integer id) {

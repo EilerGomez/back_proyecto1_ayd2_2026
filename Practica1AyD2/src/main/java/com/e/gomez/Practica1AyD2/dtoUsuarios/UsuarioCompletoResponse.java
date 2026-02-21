@@ -4,6 +4,7 @@
  */
 package com.e.gomez.Practica1AyD2.dtoUsuarios;
 
+import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRol;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,5 @@ public class UsuarioCompletoResponse {
     private UsuarioResponse usuario;
     private EntidadPerfil perfil;
     private EntidadRol rol;
+    private EntidadCartera cartera;
 }

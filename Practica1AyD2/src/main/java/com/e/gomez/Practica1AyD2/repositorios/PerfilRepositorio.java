@@ -4,8 +4,10 @@
  */
 package com.e.gomez.Practica1AyD2.repositorios;
 
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.util.List;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +17,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PerfilRepositorio extends JpaRepository<EntidadPerfil, Integer>{
-    EntidadPerfil findByUsuarioId(Integer usuarioId);
+    Optional<EntidadPerfil> findByUsuarioId(Integer usuarioId) throws ExcepcionNoExiste;
     
     boolean existsByUsuarioId (Integer usuarioId);
+    
 }
