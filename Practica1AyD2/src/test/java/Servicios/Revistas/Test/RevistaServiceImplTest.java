@@ -46,12 +46,26 @@ public class RevistaServiceImplTest {
     private EtiquetaRepositorio etiqRepo;
     @Mock
     private EdicionRepositorio edicionRepo;
+    
+    @Mock
+    private SuscripcionRepositorio suscripcionRepo;
+    @Mock
+    private LikeRepositorio likeRepo;
+    @Mock
+    private ComentarioRepositorio comentarioRepo; 
+    @Mock
+    private CategoriaRepositorio categoriaRepo;  
+    
+    @Mock
+    private UsuarioRepositorio usuarioRepo;
 
     @InjectMocks
     private RevistaServiceImpl service;
 
     private EntidadRevista revistaEjemplo;
     private RevistaRequest requestEjemplo;
+    private EntidadCategoria categoriaEjemplo;
+    private EntidadUsuario usuarioEjemplo;
 
     @BeforeEach
     void setUp() {
@@ -59,7 +73,7 @@ public class RevistaServiceImplTest {
         revistaEjemplo.setId(1);
         revistaEjemplo.setTitulo("Revista Test");
         revistaEjemplo.setEditorId(10);
-        // FIX 1: Asignar categoriaId para evitar el NPE en el DTO RevistaResponse
+
         revistaEjemplo.setCategoriaId(1); 
         revistaEjemplo.setDescripcion("Descripción de prueba");
 
@@ -67,6 +81,28 @@ public class RevistaServiceImplTest {
         requestEjemplo.setTitulo("Revista Test");
         requestEjemplo.setEditorId(10);
         requestEjemplo.setCategoriaId(1);
+        
+        categoriaEjemplo = new EntidadCategoria();
+        categoriaEjemplo.setId(1);
+        categoriaEjemplo.setNombre("Tecnología");
+        
+        usuarioEjemplo = new EntidadUsuario(); 
+        usuarioEjemplo.setId(10); 
+        usuarioEjemplo.setCorreo("CorreoUser");
+        usuarioEjemplo.setUsername("username");
+        usuarioEjemplo.setNombre("nombre");
+        usuarioEjemplo.setApellido("Apellido");
+    }
+    private void configurarMocksMapeo() {
+        when(revEtiqRepo.findById_RevistaId(anyInt())).thenReturn(new ArrayList<>());
+        when(edicionRepo.findByRevistaIdOrderByFechaPublicacionDesc(anyInt())).thenReturn(new ArrayList<>());
+        // Mocks para los nuevos contadores
+        when(suscripcionRepo.countByRevistaId(anyInt())).thenReturn(0);
+        when(likeRepo.countByRevistaId(anyInt())).thenReturn(0);
+        when(comentarioRepo.countByRevistaId(anyInt())).thenReturn(0);
+        
+        when(categoriaRepo.getById(anyInt())).thenReturn(categoriaEjemplo);
+        when(usuarioRepo.findById(anyInt())).thenReturn(Optional.of(usuarioEjemplo));
     }
 
     @Test
@@ -77,7 +113,9 @@ public class RevistaServiceImplTest {
         // Mocks para el mapToResponse
         when(revEtiqRepo.findById_RevistaId(anyInt())).thenReturn(new ArrayList<>());
         when(edicionRepo.findByRevistaIdOrderByFechaPublicacionDesc(anyInt())).thenReturn(new ArrayList<>());
+        when(categoriaRepo.getById(anyInt())).thenReturn(categoriaEjemplo);
 
+        configurarMocksMapeo();
         // Act
         RevistaResponse resultado = service.crear(requestEjemplo);
 
@@ -101,6 +139,7 @@ public class RevistaServiceImplTest {
     void getById_DeberiaRetornarRevista_SiExiste() throws ExcepcionNoExiste {
         // Arrange
         when(repo.findById(1)).thenReturn(Optional.of(revistaEjemplo));
+        configurarMocksMapeo();
         when(revEtiqRepo.findById_RevistaId(1)).thenReturn(new ArrayList<>());
         when(edicionRepo.findByRevistaIdOrderByFechaPublicacionDesc(1)).thenReturn(new ArrayList<>());
 
@@ -118,6 +157,7 @@ public class RevistaServiceImplTest {
         when(repo.findById(1)).thenReturn(Optional.of(revistaEjemplo));
         when(repo.existeTituloEnOtraRevista(anyString(), anyInt())).thenReturn(false);
         when(repo.save(any(EntidadRevista.class))).thenReturn(revistaEjemplo);
+        configurarMocksMapeo();
 
         // Act
         RevistaResponse resultado = service.actualizar(1, requestEjemplo);
@@ -158,31 +198,48 @@ public class RevistaServiceImplTest {
 
    @Test
     void mapToResponse_DeberiaArmarObjetoCompleto() {
-        // Arrange
+        
+        configurarMocksMapeo();
+
+        // Arrange 
         EntidadEtiqueta etiq = new EntidadEtiqueta(5, "Java");
         EntidadRevistaEtiqueta rel = new EntidadRevistaEtiqueta(new RevistaEtiquetaId(1, 5));
 
         EntidadEdicion edicion = new EntidadEdicion();
         edicion.setId(100);
-        edicion.setTitulo("Edicion 1");
-        // FIX 2: Asignar revistaId para evitar el NPE en el DTO EdicionResponse
         edicion.setRevistaId(1); 
         edicion.setNumeroEdicion("1era Edición");
         edicion.setPdfUrl("http://test.com");
         edicion.setFechaPublicacion(LocalDateTime.now());
 
+        // 
+        when(repo.findById(1)).thenReturn(Optional.of(revistaEjemplo));
         when(revEtiqRepo.findById_RevistaId(1)).thenReturn(List.of(rel));
         when(etiqRepo.findAllById(anyList())).thenReturn(List.of(etiq));
         when(edicionRepo.findByRevistaIdOrderByFechaPublicacionDesc(1)).thenReturn(List.of(edicion));
-        when(repo.findById(1)).thenReturn(Optional.of(revistaEjemplo));
+        
+        // Seteamos valores específicos para los contadores
+        when(suscripcionRepo.countByRevistaId(1)).thenReturn(10);
+        when(likeRepo.countByRevistaId(1)).thenReturn(5);
+        when(comentarioRepo.countByRevistaId(1)).thenReturn(3);
 
         // Act
         RevistaResponse res = assertDoesNotThrow(() -> service.getById(1));
 
         // Assert
         assertNotNull(res);
-        assertEquals(1, res.getEtiquetas().size());
+        assertEquals(1, res.getEtiquetas().size()); 
         assertEquals("Java", res.getEtiquetas().get(0).getNombre());
-        assertEquals(1, res.getEdiciones().size());
+        assertEquals(1, res.getEdiciones().size()); 
+        
+        assertEquals(10, res.getCantidadSuscripciones());
+        assertEquals(5, res.getCantidadLikes());
+        assertEquals(3, res.getCantidadComentarios());
+        
+        assertNotNull(res.getCategoria()); 
+        assertEquals("Tecnología", res.getCategoria().getNombre()); 
+        
+        assertNotNull(res.getEditor());
+        assertEquals(10, res.getEditor().getId());
     }
 }

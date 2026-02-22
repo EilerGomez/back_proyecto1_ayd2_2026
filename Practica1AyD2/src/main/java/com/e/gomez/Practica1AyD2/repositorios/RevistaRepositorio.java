@@ -22,7 +22,7 @@ public interface RevistaRepositorio extends JpaRepository<EntidadRevista, Intege
 
     // Buscar todas las revistas de un editor específico
     List<EntidadRevista> findByEditorId(Integer editorId);
-
+    
     // Buscar revistas por categoría
     List<EntidadRevista> findByCategoriaId(Integer categoriaId);
 

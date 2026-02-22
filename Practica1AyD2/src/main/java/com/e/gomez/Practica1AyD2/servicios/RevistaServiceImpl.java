@@ -16,8 +16,10 @@ import com.e.gomez.Practica1AyD2.dtoRevistas.RevistaRequest;
 import com.e.gomez.Practica1AyD2.dtoRevistas.RevistaResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCategoria;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRevistaEtiqueta;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.modelos.RevistaEtiquetaId;
 import com.e.gomez.Practica1AyD2.repositorios.*;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RevistaServiceImpl implements RevistaService {
@@ -33,15 +36,27 @@ public class RevistaServiceImpl implements RevistaService {
     private final RevistaEtiquetaRepositorio revEtiqRepo;
     private final EtiquetaRepositorio etiqRepo;
     private final EdicionRepositorio edicionRepo;
+    private final SuscripcionRepositorio suscripcionRepo;
+    private final LikeRepositorio likeRepo;
+    private final ComentarioRepositorio comentarioRepo;
+    private final CategoriaRepositorio categoriaRepo;
+    private final UsuarioRepositorio usuarioRepo;
 
     public RevistaServiceImpl(RevistaRepositorio repo, 
                               RevistaEtiquetaRepositorio revEtiqRepo, 
                               EtiquetaRepositorio etiqRepo, 
-                              EdicionRepositorio edicionRepo) {
+                              EdicionRepositorio edicionRepo,SuscripcionRepositorio suscripcionRepo,
+                                LikeRepositorio likeRepo,ComentarioRepositorio comentarioRepo,
+                                CategoriaRepositorio categoriaRepo,UsuarioRepositorio usuarioRepo) {
         this.repo = repo;
         this.revEtiqRepo = revEtiqRepo;
         this.etiqRepo = etiqRepo;
         this.edicionRepo = edicionRepo;
+        this.suscripcionRepo=suscripcionRepo;
+        this.likeRepo=likeRepo;
+        this.comentarioRepo=comentarioRepo;
+        this.categoriaRepo=categoriaRepo;
+        this.usuarioRepo=usuarioRepo;
     }
 
     @Override
@@ -131,8 +146,13 @@ public class RevistaServiceImpl implements RevistaService {
                 .stream()
                 .map(EdicionResponse::new)
                 .toList();
-
-        return new RevistaResponse(r, tags, edics);
+        
+        int cantidadSuscripciones = suscripcionRepo.countByRevistaId(r.getId());
+        int cantidadComentarios = comentarioRepo.countByRevistaId(r.getId());
+        int cantidadLikes = likeRepo.countByRevistaId(r.getId());
+        EntidadCategoria categoria = categoriaRepo.getById(r.getCategoriaId());
+        EntidadUsuario editor = usuarioRepo.findById(r.getEditorId()).orElseThrow();
+        return new RevistaResponse(r, tags, edics,cantidadComentarios,cantidadLikes,cantidadSuscripciones,categoria,editor);
     }
 
     @Override
