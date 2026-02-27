@@ -72,7 +72,7 @@ public class RevistaServiceImpl implements RevistaService {
         r.setDescripcion(req.getDescripcion());
         r.setCategoriaId(req.getCategoriaId());
         r.setFechaCreacion(LocalDate.now()); // O usar LocalDate.parse(req.getFechaCreacion())
-        r.setActiva(true);
+        r.setActiva(false);
 
         return mapToResponse(repo.save(r));
     }
@@ -175,5 +175,12 @@ public class RevistaServiceImpl implements RevistaService {
                 .toList();
             revEtiqRepo.saveAll(nuevasRelaciones);
         }
+    }
+
+    @Override
+    public RevistaResponse cambiarEstado(Integer id, boolean estado) throws ExcepcionNoExiste {
+        EntidadRevista er = repo.getById(id);
+        er.setActiva(estado);
+        return mapToResponse(repo.save(er));
     }
 }

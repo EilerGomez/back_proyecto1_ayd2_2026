@@ -28,6 +28,8 @@ public interface RevistaService {
     List<RevistaResponse> findByActivas();
     List<RevistaResponse> findByEditorId(Integer editorId);
     List<RevistaResponse> findByCategoriaId(Integer categoriaId);
-    
+    // traer por estado borrador
     void guardarEtiquetas(RevistaEtiquetasRequest req) throws ExcepcionNoExiste;
+    RevistaResponse cambiarEstado(Integer id, boolean estado) throws ExcepcionNoExiste;
+
 }
