@@ -34,7 +34,7 @@ public class RevistaController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('EDITOR','ADMIN')") // hacer esto para las partes restringidas del sistema para el usuario
     public ResponseEntity<List<RevistaResponse>> listarTodas() {
         return ResponseEntity.ok(revistaService.findAll());
     }

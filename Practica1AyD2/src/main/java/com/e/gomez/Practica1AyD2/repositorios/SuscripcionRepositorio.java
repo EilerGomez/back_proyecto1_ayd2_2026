@@ -10,10 +10,13 @@ package com.e.gomez.Practica1AyD2.repositorios;
  */
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
+import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface SuscripcionRepositorio extends JpaRepository<EntidadSuscripcion, Integer> {
@@ -31,4 +34,16 @@ public interface SuscripcionRepositorio extends JpaRepository<EntidadSuscripcion
     boolean existsByRevistaIdAndUsuarioId(Integer revistaId, Integer usuarioId);
     
     Integer countByRevistaId(Integer revistaId);
+    
+    @Query("SELECT s FROM EntidadSuscripcion s " +
+       "JOIN EntidadRevista r ON s.revistaId = r.id " +
+       "WHERE r.editorId = :editorId " +
+       "AND (:revistaId IS NULL OR s.revistaId = :revistaId) " +
+       "AND (:inicio IS NULL OR s.fechaSuscripcion >= :inicio) " +
+       "AND (:fin IS NULL OR s.fechaSuscripcion <= :fin)")
+    List<EntidadSuscripcion> buscarSuscripcionesReporte(
+        @Param("editorId") Integer editorId, 
+        @Param("revistaId") Integer revistaId, 
+        @Param("inicio") LocalDate inicio, 
+        @Param("fin") LocalDate fin);
 }
