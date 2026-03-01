@@ -4,9 +4,20 @@
  */
 package com.e.gomez.Practica1AyD2.repositorios;
 
+import com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioCompradoDetalleDTO;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioCompradoDetalleDTO;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;      // 
+import com.e.gomez.Practica1AyD2.modelos.EntidadTipoAnuncio;  // 
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;      //
+import com.e.gomez.Practica1AyD2.modelos.EntidadPrecioAnuncio;// 
+import java.time.LocalDateTime;
 
 /**
  *
@@ -15,5 +26,38 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CompraAnuncioRepositorio extends JpaRepository<EntidadCompraAnuncio, Integer> {
     List<EntidadCompraAnuncio> findByEstado(String estado);
     List<EntidadCompraAnuncio> findByDesactivadoPor(String desactivadoPor);
+    
+    
+    
+    @Query("SELECT new com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioCompradoDetalleDTO(" +
+               "ca.anuncioId, t.codigo, u.username, pr.precio, ca.fechaInicio) " +
+               "FROM EntidadCompraAnuncio ca, " +
+               "com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio a, " +
+               "com.e.gomez.Practica1AyD2.modelos.EntidadTipoAnuncio t, " +
+               "com.e.gomez.Practica1AyD2.modelos.EntidadUsuario u, " +
+               "com.e.gomez.Practica1AyD2.modelos.EntidadPrecioAnuncio pr " +
+               "WHERE ca.anuncioId = a.id " +
+               "AND a.tipoAnuncioId = t.id " +
+               "AND ca.anuncianteId = u.id " +
+               "AND ca.precioId = pr.id " +
+               "AND (:inicio IS NULL OR ca.fechaInicio >= :inicio) " +
+               "AND (:fin IS NULL OR ca.fechaInicio <= :fin)")
+        List<AnuncioCompradoDetalleDTO> listarAnunciosComprados(
+            @Param("inicio") LocalDateTime inicio, 
+            @Param("fin") LocalDateTime fin);
+        
+        
+    
+    @Query("SELECT ca FROM EntidadCompraAnuncio ca, EntidadAnuncio a, EntidadTipoAnuncio t " +
+           "WHERE ca.anuncioId = a.id " +
+           "AND a.tipoAnuncioId = t.id " +
+           "AND (:tipo IS NULL OR t.codigo = :tipo) " +
+           "AND (:inicio IS NULL OR ca.fechaInicio >= :inicio) " +
+           "AND (:fin IS NULL OR ca.fechaInicio <= :fin) " +
+           "ORDER BY ca.fechaInicio DESC")
+    List<EntidadCompraAnuncio> buscarComprasConFiltros(
+        @Param("tipo") String tipo, 
+        @Param("inicio") LocalDateTime inicio, 
+        @Param("fin") LocalDateTime fin);
     
 }

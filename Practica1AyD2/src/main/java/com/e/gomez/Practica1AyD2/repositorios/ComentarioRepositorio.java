@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import org.springframework.data.domain.Pageable; // ESTA ES LA CORRECTA
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -29,7 +31,7 @@ public interface ComentarioRepositorio extends JpaRepository<EntidadComentario, 
     int countByRevistaId(Integer revistaId);
     
     @Query("SELECT c FROM EntidadComentario c " +
-       "JOIN EntidadRevista r ON c.revistaId = r.id " + // Unimos manualmente por ID
+       "JOIN EntidadRevista r ON c.revistaId = r.id " + 
        "WHERE r.editorId = :editorId " +
        "AND (:revistaId IS NULL OR c.revistaId = :revistaId) " +
        "AND (:inicio IS NULL OR c.fechaCreacion >= :inicio) " +
@@ -39,4 +41,17 @@ public interface ComentarioRepositorio extends JpaRepository<EntidadComentario, 
         @Param("revistaId") Integer revistaId, 
         @Param("inicio") LocalDateTime inicio, 
         @Param("fin") LocalDateTime fin);
+    
+   @Query("SELECT c.revistaId FROM EntidadComentario c " +
+           "WHERE (:inicio IS NULL OR c.fechaCreacion >= :inicio) " + 
+           "AND (:fin IS NULL OR c.fechaCreacion <= :fin) " +
+           "GROUP BY c.revistaId " +
+           "ORDER BY COUNT(c.id) DESC")
+    List<Integer> findTop5RevistasMasComentadas(
+        @Param("inicio") LocalDateTime inicio, 
+        @Param("fin") LocalDateTime fin, 
+        Pageable pageable);
+
+    List<EntidadComentario> findByRevistaIdAndFechaCreacionBetween(
+        Integer revistaId, LocalDateTime inicio, LocalDateTime fin);
 }

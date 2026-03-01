@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public interface PrecioAnuncioRepositorio extends JpaRepository<EntidadPrecioAnuncio, Integer> {
     List<EntidadPrecioAnuncio> findByActivoTrue();
-    
+    Optional<EntidadPrecioAnuncio> findByTipoAnuncioIdAndActivoTrue(Integer tipoAnuncioId);
     // Buscar si ya existe un precio para esa combinación específica
     Optional<EntidadPrecioAnuncio> findByTipoAnuncioIdAndPeriodoIdAndActivoTrue(Integer tipoId, Integer periodoId) throws ExcepcionNoExiste;
 }

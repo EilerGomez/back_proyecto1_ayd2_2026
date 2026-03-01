@@ -10,6 +10,7 @@ package com.e.gomez.Practica1AyD2.repositorios;
  */
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
+import org.springframework.data.domain.Pageable; // El correcto
 import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -46,4 +47,21 @@ public interface SuscripcionRepositorio extends JpaRepository<EntidadSuscripcion
         @Param("revistaId") Integer revistaId, 
         @Param("inicio") LocalDate inicio, 
         @Param("fin") LocalDate fin);
+    
+    
+    
+    
+    @Query("SELECT s.revistaId FROM EntidadSuscripcion s " +
+           "WHERE (:inicio IS NULL OR s.fechaSuscripcion >= :inicio) " +
+           "AND (:fin IS NULL OR s.fechaSuscripcion <= :fin) " +
+           "GROUP BY s.revistaId " +
+           "ORDER BY COUNT(s.id) DESC")
+    List<Integer> findTop5RevistasIds(
+        @Param("inicio") LocalDate inicio, 
+        @Param("fin") LocalDate fin, 
+        Pageable pageable);
+
+    // Para obtener el listado detallado de una revista específica
+    List<EntidadSuscripcion> findByRevistaIdAndFechaSuscripcionBetween(
+        Integer revistaId, LocalDate inicio, LocalDate fin);
 }

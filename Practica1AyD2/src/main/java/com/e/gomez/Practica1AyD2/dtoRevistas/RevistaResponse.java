@@ -20,7 +20,7 @@ import lombok.Value;
  */
 @Value
 public class RevistaResponse {
-    int id;
+    int id; 
     String titulo;
     String descripcion;
     CategoriaResponse categoria;
