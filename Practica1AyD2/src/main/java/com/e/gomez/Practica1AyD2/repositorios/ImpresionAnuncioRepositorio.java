@@ -40,7 +40,7 @@ public interface ImpresionAnuncioRepositorio extends JpaRepository<EntidadImpres
        "FROM EntidadImpresionAnuncio i " +
        "WHERE (:inicio IS NULL OR i.fechaMostrado >= :inicio) " +
        "AND (:fin IS NULL OR i.fechaMostrado <= :fin) " +
-       "GROUP BY i.anuncioId, i.revistaId")
+       "GROUP BY i.anuncioId, i.revistaId,i.urlPagina")
     List<Object[]> contarVistasPorAnuncioYRevista(
         @Param("inicio") LocalDateTime inicio, 
         @Param("fin") LocalDateTime fin);

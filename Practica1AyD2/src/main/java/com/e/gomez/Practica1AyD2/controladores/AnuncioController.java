@@ -64,4 +64,14 @@ public class AnuncioController {
     public ResponseEntity<AnuncioResponse> actualizar(@PathVariable Integer id, @RequestBody AnuncioRequest request) throws ExcepcionNoExiste {
         return ResponseEntity.ok(anuncioService.actualizar(id, request));
     }
+    /**
+     * Obtiene anuncios aleatorios para una revista específica
+     * siempre que no estén bloqueados y estén vigentes.
+     * @param revistaId
+     * @return 
+     */
+    @GetMapping("/para-revista/{revistaId}")
+    public ResponseEntity<List<AnuncioResponse>> obtenerParaRevista(@PathVariable Integer revistaId) {
+        return ResponseEntity.ok(anuncioService.obtenerAnunciosParaRevista(revistaId));
+    }
 }

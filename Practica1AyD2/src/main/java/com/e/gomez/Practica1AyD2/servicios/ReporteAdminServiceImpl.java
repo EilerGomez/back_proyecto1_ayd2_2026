@@ -285,27 +285,33 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
         List<AnuncioEfectividadDetalleDTO> listaPlana = resultados.stream().map(row -> {
             Integer anuncioId = (Integer) row[0];
             Integer revistaId = (Integer) row[1];
-            Long vistas = (Long) row[2];
+            String urlMostrada = (String) row[2]; 
+            Long vistas = (Long) row[3];         
 
             EntidadAnuncio anuncio = anuncioRepo.findById(anuncioId).orElseThrow();
-
             RevistaResponse revistaResp = construirRevistaResponseCompleta(revistaId);
 
-            return new AnuncioEfectividadDetalleDTO(anuncioId, anuncio.getTexto(), vistas, revistaResp);
+            return new AnuncioEfectividadDetalleDTO(
+                anuncioId, 
+                anuncio.getTexto(), 
+                vistas, 
+                urlMostrada, 
+                revistaResp
+            );
         }).toList();
 
         Map<String, List<AnuncioEfectividadDetalleDTO>> agrupado = listaPlana.stream()
             .collect(Collectors.groupingBy(dto -> {
-                Integer anuncianteId = anuncioRepo.findById(dto.getAnuncioId()).get().getAnuncianteId();
-                return usuarioRepo.findById(anuncianteId).get().getUsername();
+                EntidadAnuncio a = anuncioRepo.findById(dto.getAnuncioId()).get();
+                return usuarioRepo.findById(a.getAnuncianteId()).get().getUsername();
             }));
 
-        List<AnuncianteEfectividadDTO> anunciantes = agrupado.entrySet().stream()
+        List<AnuncianteEfectividadDTO> anunciantesDTO = agrupado.entrySet().stream()
             .map(entry -> new AnuncianteEfectividadDTO(entry.getKey(), entry.getValue()))
             .toList();
 
-        return new ReporteEfectividadMaestroDTO(anunciantes);
-    }
+        return new ReporteEfectividadMaestroDTO(anunciantesDTO);
+}
 
     private RevistaResponse construirRevistaResponseCompleta(Integer revistaId) {
         EntidadRevista r = revistaRepo.findById(revistaId).orElseThrow();
@@ -319,7 +325,6 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
                 .map(EtiquetaResponse::new)
                 .toList();
 
-        //  Obtener todas las ediciones de esta revista
         List<EdicionResponse> edics = edicionRepo.findByRevistaIdOrderByFechaPublicacionDesc(r.getId())
                 .stream()
                 .map(EdicionResponse::new)

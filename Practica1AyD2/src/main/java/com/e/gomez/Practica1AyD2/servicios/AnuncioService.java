@@ -21,4 +21,5 @@ public interface AnuncioService {
     List<AnuncioResponse> listarPorEstado(String estado);
     List<AnuncioResponse> listarPorAnunciante(Integer anuncianteId);
     void cambiarEstado(Integer id, String nuevoEstado) throws ExcepcionNoExiste;
+    List<AnuncioResponse> obtenerAnunciosParaRevista(Integer revistaId);
 }

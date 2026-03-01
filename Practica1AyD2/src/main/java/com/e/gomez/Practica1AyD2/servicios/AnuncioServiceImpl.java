@@ -10,8 +10,14 @@ import com.e.gomez.Practica1AyD2.dtoAnuncios.TipoAnuncioResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadBloqueoAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.repositorios.AnuncioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.BloqueoAnuncioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +32,18 @@ public class AnuncioServiceImpl implements AnuncioService {
     private final AnuncioRepositorio repo;
     private final UsuarioService usuarioService;
     private final TipoAnuncioService tipoAnuncioService;
+    private final RevistaRepositorio revistaRepo;
+    private final BloqueoAnuncioRepositorio bloqueoAnuncioRepo;
 
     public AnuncioServiceImpl(AnuncioRepositorio repo, 
                               UsuarioService usuarioService, 
-                              TipoAnuncioService tipoAnuncioService) {
+                              TipoAnuncioService tipoAnuncioService,  RevistaRepositorio revistaRepo,
+                              BloqueoAnuncioRepositorio bloqueoAnuncioRepo) {
         this.repo = repo;
         this.usuarioService = usuarioService;
         this.tipoAnuncioService = tipoAnuncioService;
+        this.bloqueoAnuncioRepo=bloqueoAnuncioRepo;
+        this.revistaRepo=revistaRepo;
     }
 
     @Override
@@ -111,4 +122,29 @@ public class AnuncioServiceImpl implements AnuncioService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
+    @Override
+    public List<AnuncioResponse> obtenerAnunciosParaRevista(Integer revistaId) {
+        // 1. Verificar si la revista existe
+        revistaRepo.findById(revistaId)
+                .orElseThrow(() -> new RuntimeException("Revista no encontrada"));
+
+        EntidadBloqueoAnuncio entidadBloqueo = bloqueoAnuncioRepo.findByRevistaIdAndEstado(revistaId, "ACTIVO")
+                .stream().findFirst().orElse(null);
+
+        if (entidadBloqueo != null) {
+            return new ArrayList<>(); 
+        }
+
+        List<EntidadAnuncio> anunciosEntidad = repo.buscarAnunciosVigentes(LocalDateTime.now());
+
+        List<AnuncioResponse> anunciosResponse = new ArrayList<>(
+            anunciosEntidad.stream().map(this::mapToResponse).toList()
+        );
+
+        Collections.shuffle(anunciosResponse);
+
+        return anunciosResponse;
+    }
+    
 }

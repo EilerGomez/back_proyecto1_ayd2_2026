@@ -18,5 +18,6 @@ public class AnuncioEfectividadDetalleDTO {
     private Integer anuncioId;
     private String textoAnuncio;
     private Long cantidadVistas;
+    private String url;
     private RevistaResponse revistaDondeSeMostro;
 }
