@@ -26,6 +26,7 @@ import com.e.gomez.Practica1AyD2.repositorios.UsuarioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.UsuarioRolRepositorio;
 import com.e.gomez.Practica1AyD2.utilities.GeneratePassword;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 /**
@@ -138,8 +139,15 @@ public class UsuarioServiceImpl implements UsuarioService {
         
         uRepositorio.save(usuarioUpdate);
         
-        return new UsuarioResponse(usuarioUpdate);
+        return new UsuarioResponse(usuarioUpdate, perfilRepository.getByUsuarioId(usuarioUpdate.getId()));
         
+    }
+
+    @Override
+    public String generarCodigoRecuperacion() {
+        SecureRandom random = new SecureRandom();
+        int num = random.nextInt(900000) + 100000; // Genera un número entre 100000 y 999999
+        return String.valueOf(num); // Lo devuelve como String sin espacios
     }
     
 }

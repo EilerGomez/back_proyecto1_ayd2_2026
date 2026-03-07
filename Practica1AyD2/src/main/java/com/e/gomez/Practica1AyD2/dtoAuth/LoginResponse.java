@@ -7,13 +7,22 @@ package com.e.gomez.Practica1AyD2.dtoAuth;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioCompletoResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRol;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
 /**
  *
  * @author eiler
  */
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class LoginResponse {
     String token;
     String tokenType;   // "Bearer"

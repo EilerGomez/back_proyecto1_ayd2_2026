@@ -9,6 +9,7 @@ import com.e.gomez.Practica1AyD2.dtoPagosyCostos.HistorialCostoResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadHistorialCosto;
 import com.e.gomez.Practica1AyD2.repositorios.HistorialCostoRepositorio;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class HistorialCostoServiceImpl implements HistorialCostoService {
         repo.findByRevistaIdAndFechaFinIsNull(req.getRevistaId())
                 .ifPresent(costoAnterior -> {
                     // La fecha fin es un día antes de que inicie el nuevo costo
-                    costoAnterior.setFechaFin(req.getFechaInicio().minusDays(1));
+                    costoAnterior.setFechaFin(LocalDate.now());
                     repo.save(costoAnterior);
                 });
 

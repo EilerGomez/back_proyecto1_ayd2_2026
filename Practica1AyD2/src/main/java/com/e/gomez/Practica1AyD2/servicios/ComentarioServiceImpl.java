@@ -11,6 +11,7 @@ import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadComentario;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.ComentarioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ComentarioServiceImpl implements ComentarioService {
     private final ComentarioRepositorio repo;
     private final UsuarioService usuarioServicio;
+    private final PerfilRepositorio perfilRepo;
 
-    public ComentarioServiceImpl(ComentarioRepositorio repo,UsuarioService usuarioServicio){ 
+    public ComentarioServiceImpl(ComentarioRepositorio repo,UsuarioService usuarioServicio,PerfilRepositorio perfilRepo){ 
         this.repo = repo; 
         this.usuarioServicio=usuarioServicio;
+        this.perfilRepo=perfilRepo;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         c.setFechaCreacion(LocalDateTime.now());
         
         EntidadUsuario u = usuarioServicio.getById(req.getUsuarioId());
-        return new ComentarioResponse(repo.save(c), new UsuarioResponse(u));
+        return new ComentarioResponse(repo.save(c), new UsuarioResponse(u, perfilRepo.findByUsuarioId(u.getId()).orElseThrow()));
     }
 
     @Override
@@ -52,7 +55,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         c.setContenido(nuevoContenido);
         EntidadUsuario u = usuarioServicio.getById(c.getUsuarioId());
         
-        return new ComentarioResponse(repo.save(c), new UsuarioResponse(u));
+        return new ComentarioResponse(repo.save(c), new UsuarioResponse(u, perfilRepo.findByUsuarioId(u.getId()).orElseThrow()));
     }
 
     @Override
@@ -68,7 +71,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         
         for (EntidadComentario ec : entidades) {
             EntidadUsuario u = usuarioServicio.getById(ec.getUsuarioId());
-            ComentarioResponse cr = new ComentarioResponse(ec, new UsuarioResponse(u));
+            ComentarioResponse cr = new ComentarioResponse(ec, new UsuarioResponse(u, perfilRepo.findByUsuarioId(u.getId()).orElseThrow()));
             dtos.add(cr);
         }
         
@@ -82,7 +85,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         
         for (EntidadComentario ec : entidades) {
             EntidadUsuario u = usuarioServicio.getById(ec.getUsuarioId());
-            ComentarioResponse cr = new ComentarioResponse(ec, new UsuarioResponse(u));
+            ComentarioResponse cr = new ComentarioResponse(ec, new UsuarioResponse(u, perfilRepo.findByUsuarioId(u.getId()).orElseThrow()));
             dtos.add(cr);
         }
         

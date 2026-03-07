@@ -16,7 +16,9 @@ import com.e.gomez.Practica1AyD2.dtoRevistas.RevistaRequest;
 import com.e.gomez.Practica1AyD2.dtoRevistas.RevistaResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.mantenimiento.MantenimientoSistemaService;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCategoria;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPagoRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRevistaEtiqueta;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
@@ -41,13 +43,18 @@ public class RevistaServiceImpl implements RevistaService {
     private final ComentarioRepositorio comentarioRepo;
     private final CategoriaRepositorio categoriaRepo;
     private final UsuarioRepositorio usuarioRepo;
+    private final PerfilRepositorio perfilRepo;
+    private final PagoRevistaRepositorio pagoRepo;
+    private final MantenimientoSistemaService mantenimiento;
 
     public RevistaServiceImpl(RevistaRepositorio repo, 
                               RevistaEtiquetaRepositorio revEtiqRepo, 
                               EtiquetaRepositorio etiqRepo, 
                               EdicionRepositorio edicionRepo,SuscripcionRepositorio suscripcionRepo,
                                 LikeRepositorio likeRepo,ComentarioRepositorio comentarioRepo,
-                                CategoriaRepositorio categoriaRepo,UsuarioRepositorio usuarioRepo) {
+                                CategoriaRepositorio categoriaRepo,UsuarioRepositorio usuarioRepo,PerfilRepositorio perfilRepo,
+                                 PagoRevistaRepositorio pagoRepo,
+                                 MantenimientoSistemaService mantenimiento) {
         this.repo = repo;
         this.revEtiqRepo = revEtiqRepo;
         this.etiqRepo = etiqRepo;
@@ -57,6 +64,9 @@ public class RevistaServiceImpl implements RevistaService {
         this.comentarioRepo=comentarioRepo;
         this.categoriaRepo=categoriaRepo;
         this.usuarioRepo=usuarioRepo;
+        this.perfilRepo=perfilRepo;
+        this.pagoRepo=pagoRepo;
+        this.mantenimiento=mantenimiento;
     }
 
     @Override
@@ -72,6 +82,9 @@ public class RevistaServiceImpl implements RevistaService {
         r.setDescripcion(req.getDescripcion());
         r.setCategoriaId(req.getCategoriaId());
         r.setFechaCreacion(LocalDate.now()); // O usar LocalDate.parse(req.getFechaCreacion())
+        r.setPermiteComentarios(req.isPermiteComentarios());
+        r.setPermiteLikes(req.isPermiteLikes());
+        r.setPermiteSuscripciones(req.isPermiteSuscripciones());
         r.setActiva(false);
 
         return mapToResponse(repo.save(r));
@@ -91,6 +104,10 @@ public class RevistaServiceImpl implements RevistaService {
         r.setTitulo(req.getTitulo());
         r.setDescripcion(req.getDescripcion());
         r.setCategoriaId(req.getCategoriaId());
+        r.setPermiteComentarios(req.isPermiteComentarios());
+        r.setPermiteLikes(req.isPermiteLikes());
+        r.setPermiteSuscripciones(req.isPermiteSuscripciones());
+        r.setFechaCreacion(req.getFechaCreacion());
 
         return mapToResponse(repo.save(r));
     }
@@ -115,11 +132,24 @@ public class RevistaServiceImpl implements RevistaService {
 
     @Override
     public List<RevistaResponse> findByActivas() {
+        try {
+            mantenimiento.desactivarBloqueosDeAnunciosExpirados();
+            mantenimiento.desactivarRevistasVencidas();
+            
+        } catch (ExcepcionNoExiste ex) {
+            System.getLogger(RevistaServiceImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
         return repo.findByActivaTrue().stream().map(this::mapToResponse).toList();
     }
 
     @Override
     public List<RevistaResponse> findByEditorId(Integer editorId) {
+        try {
+            mantenimiento.desactivarBloqueosDeAnunciosExpirados();
+            mantenimiento.desactivarRevistasVencidas();
+        } catch (ExcepcionNoExiste ex) {
+            System.getLogger(RevistaServiceImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
         return repo.findByEditorId(editorId).stream().map(this::mapToResponse).toList();
     }
 
@@ -152,7 +182,7 @@ public class RevistaServiceImpl implements RevistaService {
         int cantidadLikes = likeRepo.countByRevistaId(r.getId());
         EntidadCategoria categoria = categoriaRepo.getById(r.getCategoriaId());
         EntidadUsuario editor = usuarioRepo.findById(r.getEditorId()).orElseThrow();
-        return new RevistaResponse(r, tags, edics,cantidadComentarios,cantidadLikes,cantidadSuscripciones,categoria,editor);
+        return new RevistaResponse(r, tags, edics,cantidadComentarios,cantidadLikes,cantidadSuscripciones,categoria,editor,perfilRepo.getByUsuarioId(editor.getId()));
     }
 
     @Override
@@ -180,7 +210,21 @@ public class RevistaServiceImpl implements RevistaService {
     @Override
     public RevistaResponse cambiarEstado(Integer id, boolean estado) throws ExcepcionNoExiste {
         EntidadRevista er = repo.getById(id);
-        er.setActiva(estado);
+        List<EntidadPagoRevista> epr = pagoRepo.findByRevistaId(id);
+        if(estado==true){
+            System.out.println("Es true");
+            for (EntidadPagoRevista entidadPagoRevista : epr) {
+                System.out.println(epr);
+                if(entidadPagoRevista.getPeriodoFin().isAfter(LocalDate.now())){
+                    er.setActiva(estado);
+                    System.out.println("Se encontro un pago vigente");
+                    return mapToResponse(repo.save(er));
+                }
+            }
+        }else{
+            er.setActiva(estado);
+        }
+        
         return mapToResponse(repo.save(er));
     }
 }

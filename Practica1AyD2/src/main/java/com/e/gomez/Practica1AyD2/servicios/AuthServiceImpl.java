@@ -78,6 +78,10 @@ public class AuthServiceImpl implements AuthService {
         EntidadUsuario user = usuarioRepositorio
                 .findByUsernameIgnoreCaseOrCorreoIgnoreCase(ident, ident)
                 .orElseThrow(() -> new ExcepcionNoExiste("Usuario no encontrado"));
+        
+        if(user.getEstado().equalsIgnoreCase("INACTIVO")){
+            throw new ExcepcionCredencialesInvalidas("El usuario no esta activo para el sistema");
+        }
 
         // Ajustá esto a tu getter real
         String hashed = user.getPassword_hash();
@@ -109,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
                 token,
                 "Bearer",
                 jwtService.getExpirationMs(),
-                new UsuarioCompletoResponse(new UsuarioResponse(user), perfil, rol,cartera)
+                new UsuarioCompletoResponse(new UsuarioResponse(user,perfil), perfil, rol,cartera)
         );
     }
 

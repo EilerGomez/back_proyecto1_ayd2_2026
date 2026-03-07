@@ -11,7 +11,10 @@ package com.e.gomez.Practica1AyD2.servicios;
 
 import com.e.gomez.Practica1AyD2.dtoAnuncios.ImpresionAnuncioRequest;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.ImpresionAnuncioResponse;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadImpresionAnuncio;
+import com.e.gomez.Practica1AyD2.repositorios.CompraAnuncioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.ImpresionAnuncioRepositorio;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +25,24 @@ import java.util.List;
 public class ImpresionAnuncioServiceImpl implements ImpresionAnuncioService {
 
     private final ImpresionAnuncioRepositorio repo;
+    private final CompraAnuncioRepositorio compraService;
 
-    public ImpresionAnuncioServiceImpl(ImpresionAnuncioRepositorio repo) {
+    public ImpresionAnuncioServiceImpl(ImpresionAnuncioRepositorio repo, CompraAnuncioRepositorio compraService) {
         this.repo = repo;
+        this.compraService=compraService;
     }
 
     @Override
     @Transactional
-    public void registrarImpresion(ImpresionAnuncioRequest req) {
+    public void registrarImpresion(ImpresionAnuncioRequest req)throws ExcepcionNoExiste {
+        List<EntidadCompraAnuncio> compra = compraService.findByAnuncioId(req.getAnuncioId());
+        EntidadCompraAnuncio compraActiva = compra.stream()
+                .filter(c -> "ACTIVO".equals(c.getEstado()))
+                .findFirst() 
+                .orElse(null); 
         EntidadImpresionAnuncio impresion = EntidadImpresionAnuncio.builder()
                 .anuncioId(req.getAnuncioId())
-                .compraId(req.getCompraId())
+                .compraId(compraActiva.getId())
                 .revistaId(req.getRevistaId())
                 .urlPagina(req.getUrlPagina())
                 .fechaMostrado(LocalDateTime.now())

@@ -26,11 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeServiceImpl implements LikeService {
     private final LikeRepositorio repo;
     private final UsuarioService usuarioService;
+    private final PerfilService perfilService;
 
     @Autowired
-    public LikeServiceImpl(LikeRepositorio repo, UsuarioService usuarioService) {
+    public LikeServiceImpl(LikeRepositorio repo, UsuarioService usuarioService,PerfilService perfilService) {
         this.repo = repo; 
         this.usuarioService=usuarioService;
+        this.perfilService=perfilService;
     }
 
     @Override
@@ -43,7 +45,8 @@ public class LikeServiceImpl implements LikeService {
         EntidadLike l = new EntidadLike();
         l.setRevistaId(req.getRevistaId());
         l.setUsuarioId(req.getUsuarioId());
-        return new LikeResponse(repo.save(l),new UsuarioResponse(usuarioService.getById(req.getUsuarioId())));
+        EntidadUsuario eu =usuarioService.getById(req.getUsuarioId());
+        return new LikeResponse(repo.save(l),new UsuarioResponse(eu, perfilService.findByUsuarioId(eu.getId())));
         
     }
 
@@ -69,7 +72,7 @@ public class LikeServiceImpl implements LikeService {
         List<LikeResponse> dtos = new ArrayList<>();
         for (EntidadLike el : entidades) {
             EntidadUsuario u = usuarioService.getById(el.getUsuarioId());
-            LikeResponse lr = new LikeResponse(el, new UsuarioResponse(u));
+            LikeResponse lr = new LikeResponse(el, new UsuarioResponse(u, perfilService.findByUsuarioId(u.getId())));
             dtos.add(lr);
         }
         

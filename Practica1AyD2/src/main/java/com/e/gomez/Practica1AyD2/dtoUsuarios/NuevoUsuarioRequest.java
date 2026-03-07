@@ -9,13 +9,16 @@ import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author eiler
  */
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
+@Getter @Setter
 public class NuevoUsuarioRequest {
      String nombre;
      String username;

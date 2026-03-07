@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e4c7e2cc-bc87-4b12-ba2f-34393a3428d2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/BloqueoAnuncioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/BloqueoAnuncioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/CompraAnuncioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/CompraAnuncioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/ImpresionAnuncioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/ImpresionAnuncioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/LikeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/LikeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/PagoRevistaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/PagoRevistaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/PrecioAnuncioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/PrecioAnuncioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/ReporteAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/ReporteAdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/RevistaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/RevistaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/controladores/UsuarioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/AnuncioResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/AnuncioResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/ImpresionAnuncioRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/ImpresionAnuncioRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/PeriodoAnuncioResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/PeriodoAnuncioResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/PrecioAnuncioResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/PrecioAnuncioResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/PrecioBloqueoResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/PrecioBloqueoResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/TipoAnuncioResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoAnuncios/TipoAnuncioResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoPagosyCostos/HistorialCostoResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoPagosyCostos/HistorialCostoResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoReportesAdmin/ReporteGananciaRevistaDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoReportesAdmin/ReporteGananciaRevistaDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoReportesAdmin/ReporteGananciasMaestroDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoReportesAdmin/ReporteGananciasMaestroDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoRevistas/RevistaRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoRevistas/RevistaRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoRevistas/RevistaResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoRevistas/RevistaResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoTransacciones/TransaccionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoTransacciones/TransaccionResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoUsuarios/UsuarioResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/dtoUsuarios/UsuarioResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/excepciones/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/excepciones/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/AnuncioRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/AnuncioRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/BloqueoAnuncioRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/BloqueoAnuncioRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/CompraAnuncioRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/CompraAnuncioRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/PerfilRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/PerfilRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/PrecioAnuncioRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/PrecioAnuncioRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/UsuarioRepositorio.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/repositorios/UsuarioRepositorio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/seguridad/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/seguridad/JwtAuthFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/seguridad/SecurityConfigJwt.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/seguridad/SecurityConfigJwt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/AnuncioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/AnuncioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/BloqueoAnuncioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/BloqueoAnuncioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/BloqueoAnuncioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/BloqueoAnuncioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ComentarioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ComentarioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/CompraAnuncioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/CompraAnuncioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/CompraAnuncioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/CompraAnuncioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/EdicionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/EdicionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/HistorialCostoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/HistorialCostoServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ImpresionAnuncioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ImpresionAnuncioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ImpresionAnuncioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ImpresionAnuncioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/LikeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/LikeServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PagoRevistaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PagoRevistaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PagoRevistaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PagoRevistaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PrecioAnuncioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PrecioAnuncioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PrecioAnuncioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/PrecioAnuncioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ReporteAdminService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ReporteAdminService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ReporteAdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/ReporteAdminServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/RevistaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/RevistaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/SuscripcionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/SuscripcionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/TransaccionCarteraServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/TransaccionCarteraServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/UsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/UsuarioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/UsuarioServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/java/com/e/gomez/Practica1AyD2/servicios/UsuarioServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Autenticacion/Test/AuthServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Autenticacion/Test/AuthServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Carteras/Test/CarteraServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Carteras/Test/CarteraServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Categorias/Test/CategoriaServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Categorias/Test/CategoriaServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Comentarios_Reacciones_Suscripciones/Test/ComentarioServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Comentarios_Reacciones_Suscripciones/Test/ComentarioServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Comentarios_Reacciones_Suscripciones/Test/LikeServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Comentarios_Reacciones_Suscripciones/Test/LikeServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Comentarios_Reacciones_Suscripciones/Test/SuscripcionServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Comentarios_Reacciones_Suscripciones/Test/SuscripcionServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Perfiles/Test/PerfilServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Perfiles/Test/PerfilServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Revistas/Test/EdicionServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Revistas/Test/EdicionServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Revistas/Test/RevistaServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Revistas/Test/RevistaServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Usuarios/Tests/UsuarioServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Practica1AyD2/src/test/java/Servicios/Usuarios/Tests/UsuarioServiceImplTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="3AYzGmIK68vGC9GjFyePvhpWZnZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/eiler/Documentos/Universidad/2026/AyD2/back_proyecto1_ayd2_2026",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e4c7e2cc-bc87-4b12-ba2f-34393a3428d2" name="Changes" comment="" />
+      <created>1772784200135</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1772784200135</updated>
+      <workItem from="1772784208778" duration="321000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

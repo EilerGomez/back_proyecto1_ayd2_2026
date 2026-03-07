@@ -13,8 +13,16 @@ import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import lombok.Value;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Value
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+
 public class AnuncioResponse {
     int id;
     String texto;

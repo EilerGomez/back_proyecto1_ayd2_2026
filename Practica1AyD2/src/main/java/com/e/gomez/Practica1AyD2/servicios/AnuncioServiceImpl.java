@@ -9,11 +9,16 @@ import com.e.gomez.Practica1AyD2.dtoAnuncios.AnuncioResponse;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.TipoAnuncioResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.mantenimiento.MantenimientoSistemaService;
 import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadBloqueoAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.AnuncioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.BloqueoAnuncioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.CompraAnuncioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,16 +39,23 @@ public class AnuncioServiceImpl implements AnuncioService {
     private final TipoAnuncioService tipoAnuncioService;
     private final RevistaRepositorio revistaRepo;
     private final BloqueoAnuncioRepositorio bloqueoAnuncioRepo;
+    private final PerfilRepositorio perfilRepo;
+    private final CompraAnuncioRepositorio compraRepo;
+    private final MantenimientoSistemaService mantenimiento;
 
     public AnuncioServiceImpl(AnuncioRepositorio repo, 
                               UsuarioService usuarioService, 
                               TipoAnuncioService tipoAnuncioService,  RevistaRepositorio revistaRepo,
-                              BloqueoAnuncioRepositorio bloqueoAnuncioRepo) {
+                              BloqueoAnuncioRepositorio bloqueoAnuncioRepo, PerfilRepositorio perfilRepo,
+                              CompraAnuncioRepositorio compraRepo, MantenimientoSistemaService mantenimiento) {
         this.repo = repo;
         this.usuarioService = usuarioService;
         this.tipoAnuncioService = tipoAnuncioService;
         this.bloqueoAnuncioRepo=bloqueoAnuncioRepo;
         this.revistaRepo=revistaRepo;
+        this.perfilRepo=perfilRepo;
+        this.compraRepo=compraRepo;
+        this.mantenimiento=mantenimiento;
     }
 
     @Override
@@ -56,7 +68,7 @@ public class AnuncioServiceImpl implements AnuncioService {
                 .imagenUrl(req.getImagenUrl())
                 .videoUrl(req.getVideoUrl())
                 .urlDestino(req.getUrlDestino())
-                .estado(req.getEstado() != null ? req.getEstado() : "BORRADOR")
+                .estado( "BORRADOR")
                 .fechaCreacion(LocalDateTime.now())
                 .build();
         return mapToResponse(repo.save(anuncio));
@@ -64,11 +76,16 @@ public class AnuncioServiceImpl implements AnuncioService {
 
     @Override
     public List<AnuncioResponse> listarPorEstado(String estado) {
-        return repo.findByEstado(estado).stream().map(this::mapToResponse).toList();
+        mantenimiento.desactivarAnunciosExpirados();
+        List<AnuncioResponse> anunciosResponse = repo.findByEstadoRandom(estado).stream().map(this::mapToResponse).toList();
+        //Collections.shuffle(anunciosResponse);
+
+        return anunciosResponse;
     }
 
     @Override
     public List<AnuncioResponse> listarPorAnunciante(Integer anuncianteId) {
+        mantenimiento.desactivarAnunciosExpirados();
         return repo.findByAnuncianteId(anuncianteId).stream().map(this::mapToResponse).toList();
     }
 
@@ -82,13 +99,24 @@ public class AnuncioServiceImpl implements AnuncioService {
     @Transactional
     public void cambiarEstado(Integer id, String nuevoEstado) throws ExcepcionNoExiste {
         EntidadAnuncio a = repo.findById(id).orElseThrow(() -> new ExcepcionNoExiste("Anuncio no existe"));
-        a.setEstado(nuevoEstado);
+        if(nuevoEstado.equalsIgnoreCase("ACTIVO")){
+            List<EntidadCompraAnuncio> dto = compraRepo.findByAnuncioId(id);
+            for (EntidadCompraAnuncio eca : dto) {
+                if(eca.getEstado().equalsIgnoreCase("ACTIVO")){
+                    a.setEstado(nuevoEstado);
+                    break;
+                }
+            }
+        }else{
+            a.setEstado(nuevoEstado);
+        }
         repo.save(a);
     }
 
     private AnuncioResponse mapToResponse(EntidadAnuncio a) {
         try {
-            UsuarioResponse ur = new UsuarioResponse(usuarioService.getById(a.getAnuncianteId()));
+            EntidadUsuario eu = usuarioService.getById(a.getAnuncianteId());
+            UsuarioResponse ur = new UsuarioResponse(eu,perfilRepo.findByUsuarioId(eu.getId()).orElseThrow());
             TipoAnuncioResponse tr = tipoAnuncioService.obtenerPorId(a.getTipoAnuncioId());
             return new AnuncioResponse(a, ur, tr);
         } catch (Exception e) {

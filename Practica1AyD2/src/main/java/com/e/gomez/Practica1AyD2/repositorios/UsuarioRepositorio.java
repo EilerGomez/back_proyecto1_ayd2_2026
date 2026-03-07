@@ -4,6 +4,7 @@
  */
 package com.e.gomez.Practica1AyD2.repositorios;
 
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.util.List;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import java.util.Optional;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UsuarioRepositorio extends JpaRepository<EntidadUsuario,Integer> {
-    List<EntidadUsuario> findByCorreo(String correo);
     boolean existsByCorreo (String correo);
     
     List<EntidadUsuario> findByUsername(String username);
@@ -39,5 +39,6 @@ public interface UsuarioRepositorio extends JpaRepository<EntidadUsuario,Integer
     
     Optional<EntidadUsuario> findByUsernameIgnoreCaseOrCorreoIgnoreCase(String username, String correo);
 
-
+    Optional<EntidadUsuario> findByCorreo(String correo) throws ExcepcionNoExiste;
+    
 }

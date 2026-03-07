@@ -4,7 +4,9 @@
  */
 package com.e.gomez.Practica1AyD2.dtoReportesAdmin;
 
+import com.e.gomez.Practica1AyD2.dtoPagosyCostos.HistorialCostoResponse;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,9 +19,7 @@ import lombok.Data;
 public class ReporteGananciaRevistaDTO {
     private Integer revistaId;
     private String nombreRevista;
-    private BigDecimal ingresosPagosEditor;
-    private BigDecimal ingresosAnuncios;
-    private BigDecimal costoMantenimiento;
-    private BigDecimal totalIngreso;
-    private BigDecimal gananciaNeta;
+    private BigDecimal ingresosPagosEditor; // total de ingresos por pagos de editor
+
+    List<HistorialCostoResponse> costos;
 }

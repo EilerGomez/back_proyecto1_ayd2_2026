@@ -58,9 +58,11 @@ public class UsuarioController {
     
     @PostMapping()
     public ResponseEntity<UsuarioCompletoResponse> createdUser(@RequestBody NuevoUsuarioRequest nuevoU) throws ExcepcionEntidadDuplicada, ExcepcionNoExiste{
+        EntidadUsuario eu= servicio.crearUsuario(nuevoU);
+        EntidadPerfil perfil= servicioPerfil.findByUsuarioId(eu.getId());
+
         UsuarioResponse usuarioNuevo;
-        usuarioNuevo = new UsuarioResponse(servicio.crearUsuario(nuevoU));
-        EntidadPerfil perfil= servicioPerfil.findByUsuarioId(usuarioNuevo.getId());
+        usuarioNuevo = new UsuarioResponse(eu,perfil);
         EntidadRol rol = rolService.traerRolDeUsuario(usuarioNuevo.getId());
         EntidadCartera cartera = carteraService.obtenerPorUsuario(usuarioNuevo.getId());
         UsuarioCompletoResponse response = new UsuarioCompletoResponse(usuarioNuevo, perfil, rol,cartera);
@@ -72,8 +74,9 @@ public class UsuarioController {
           List<UsuarioCompletoResponse> respuesta = new ArrayList<>();
 
         for (var usuario : servicio.findAll()) {
-            UsuarioResponse usuarioDto = new UsuarioResponse(usuario);
             EntidadPerfil perfil = servicioPerfil.findByUsuarioId(usuario.getId());
+
+            UsuarioResponse usuarioDto = new UsuarioResponse(usuario,perfil);
             EntidadRol rol = rolService.traerRolDeUsuario(usuario.getId()); // puede lanzar
             EntidadCartera cartera = carteraService.obtenerPorUsuario(usuario.getId());
 
@@ -87,11 +90,11 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioCompletoResponse> getById(@PathVariable Integer id)
             throws ExcepcionNoExiste {
+        EntidadPerfil perfil = servicioPerfil.findByUsuarioId(id);
 
         EntidadUsuario usuario = servicio.getById(id);
-        UsuarioResponse usuarioDto = new UsuarioResponse(usuario);
+        UsuarioResponse usuarioDto = new UsuarioResponse(usuario,perfil);
 
-        EntidadPerfil perfil = servicioPerfil.findByUsuarioId(id);
         EntidadRol rol = rolService.traerRolDeUsuario(id);
         EntidadCartera cartera = carteraService.obtenerPorUsuario(usuario.getId());
 

@@ -40,7 +40,6 @@ public class RevistaController {
     }
 
     @GetMapping("/activas")
-    @PreAuthorize("hasRole('EDITOR')")
     public ResponseEntity<List<RevistaResponse>> listarActivas() {
         return ResponseEntity.ok(revistaService.findByActivas());
     }
@@ -84,5 +83,14 @@ public class RevistaController {
     public ResponseEntity<String> asignarEtiquetas(@RequestBody RevistaEtiquetasRequest request) throws ExcepcionNoExiste {
         revistaService.guardarEtiquetas(request);
         return ResponseEntity.ok("OK");
+    }
+    
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RevistaResponse> cambiarEstado(
+            @PathVariable Integer id, 
+            @RequestParam boolean estado) throws ExcepcionNoExiste {
+        
+        return ResponseEntity.ok(revistaService.cambiarEstado(id, estado));
     }
 }

@@ -13,10 +13,13 @@ import com.e.gomez.Practica1AyD2.dtoTransacciones.TransaccionRequest;
 import com.e.gomez.Practica1AyD2.dtoTransacciones.TransaccionResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.mantenimiento.MantenimientoSistemaService;
 import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.CompraAnuncioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,21 +39,27 @@ public class CompraAnuncioServiceImpl implements CompraAnuncioService {
     private final TransaccionCarteraService transaccionService;
     private final UsuarioService usuarioService;
     private final CarteraService carteraService;
+    private final PerfilRepositorio perfilRepo;
+    private final MantenimientoSistemaService mantenimiento;
 
     public CompraAnuncioServiceImpl(CompraAnuncioRepositorio repo, AnuncioService anuncioService, 
                                    PrecioAnuncioService precioService, TransaccionCarteraService transaccionService,
-                                   UsuarioService usuarioService,CarteraService carteraService) {
+                                   UsuarioService usuarioService,CarteraService carteraService,PerfilRepositorio perfilRepo,
+                                   MantenimientoSistemaService mantenimiento) {
         this.repo = repo;
         this.anuncioService = anuncioService;
         this.precioService = precioService;
         this.transaccionService = transaccionService;
         this.usuarioService=usuarioService;
         this.carteraService=carteraService;
+        this.perfilRepo=perfilRepo;
+        this.mantenimiento=mantenimiento;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CompraAnuncioResponseSimple comprar(CompraAnuncioRequest req) throws ExcepcionNoExiste {
+        System.out.println("Va aca: en comprar anuncio" + req.toString());
         PrecioAnuncioResponse precioInfo = precioService.obtenerPorId(req.getPrecioId());
         int diasCampaña = precioInfo.getPeriodoAnuncio().getDias();
 
@@ -98,10 +107,11 @@ public class CompraAnuncioServiceImpl implements CompraAnuncioService {
 
         // CAMBIAR ESTADO DEL ANUNCIO A ACTIVO
         anuncioService.cambiarEstado(req.getAnuncioId(), "ACTIVO");
-        UsuarioResponse ur = new UsuarioResponse(usuarioService.getById(req.getAnuncianteId()));
+        EntidadUsuario eu = usuarioService.getById(req.getAnuncianteId());
+        UsuarioResponse ur = new UsuarioResponse(eu,perfilRepo.findByUsuarioId(eu.getId()).orElseThrow());
 
         //Retornar Response Detallado
-        return new CompraAnuncioResponseSimple(guardada, precioService.obtenerPorId(guardada.getAnuncioId())
+        return new CompraAnuncioResponseSimple(guardada, precioService.obtenerPorId(guardada.getPrecioId())
         );
     }
 
@@ -127,7 +137,9 @@ public class CompraAnuncioServiceImpl implements CompraAnuncioService {
     private CompraAnuncioResponseDetallado mapToDetalladoResponse(EntidadCompraAnuncio c) {
         try {
             PrecioAnuncioResponse p = precioService.obtenerPorId(c.getPrecioId());
-            UsuarioResponse anunciante = new UsuarioResponse(usuarioService.getById(c.getAnuncianteId()));
+                    EntidadUsuario eu = usuarioService.getById(c.getAnuncianteId());
+
+            UsuarioResponse anunciante = new UsuarioResponse(eu,perfilRepo.findByUsuarioId(eu.getId()).orElseThrow());
             AnuncioResponse anuncio = anuncioService.obtenerPorId(c.getAnuncioId());
             PrecioAnuncioResponse precio = precioService.obtenerPorId(c.getPrecioId());
             return new CompraAnuncioResponseDetallado(c,anunciante,anuncio,p
@@ -139,5 +151,21 @@ public class CompraAnuncioServiceImpl implements CompraAnuncioService {
     public List<CompraAnuncioResponseDetallado> listarPorDesactivadoPor(String desactivadoPor) {
         return repo.findByDesactivadoPor(desactivadoPor).stream()
                 .map(this::mapToDetalladoResponse).toList();
+    }
+
+    @Override
+    public List<CompraAnuncioResponseDetallado> listarPorAnunciante(Integer anuncianteId) throws ExcepcionNoExiste {
+        return repo.findByAnuncianteId(anuncianteId).stream()
+                .map(this::mapToDetalladoResponse).toList();
+    }
+
+    @Override
+    public CompraAnuncioResponseSimple CambiarFechaFin(Integer idCompra, LocalDateTime fechaFin) throws ExcepcionNoExiste {
+        EntidadCompraAnuncio entidad = repo.getById(idCompra);
+        entidad.setFechaFin(fechaFin);
+        repo.save(entidad);
+        PrecioAnuncioResponse precio = precioService.obtenerPorId(entidad.getPrecioId());
+        mantenimiento.desactivarAnunciosExpirados();
+        return new CompraAnuncioResponseSimple(entidad,precio);
     }
 }

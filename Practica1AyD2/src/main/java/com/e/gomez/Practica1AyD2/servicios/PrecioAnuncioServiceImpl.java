@@ -13,6 +13,7 @@ import com.e.gomez.Practica1AyD2.dtoAnuncios.*;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPrecioAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.PrecioAnuncioRepositorio;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +28,18 @@ public class PrecioAnuncioServiceImpl implements PrecioAnuncioService {
     private final TipoAnuncioService tipoService;
     private final PeriodoAnuncioService periodoService;
     private final UsuarioService usuarioService;
+    private final PerfilService perfilService;
 
     public PrecioAnuncioServiceImpl(PrecioAnuncioRepositorio repo, 
                                     TipoAnuncioService tipoService, 
                                     PeriodoAnuncioService periodoService,
-                                    UsuarioService usuarioService) {
+                                    UsuarioService usuarioService,
+                                    PerfilService perfilService) {
         this.repo = repo;
         this.tipoService = tipoService;
         this.periodoService = periodoService;
         this.usuarioService=usuarioService;
+        this.perfilService=perfilService;
     }
 
     @Override
@@ -82,7 +86,8 @@ public class PrecioAnuncioServiceImpl implements PrecioAnuncioService {
     // metodo para mapear la entidad response completa
     private PrecioAnuncioResponse mapToResponse(EntidadPrecioAnuncio p) {
         try {
-            UsuarioResponse u = new UsuarioResponse( usuarioService.getById(p.getAdminId()));
+            EntidadUsuario eu =  usuarioService.getById(p.getAdminId());
+            UsuarioResponse u = new UsuarioResponse(eu,perfilService.findByUsuarioId(eu.getId()));
             TipoAnuncioResponse t = tipoService.obtenerPorId(p.getTipoAnuncioId());
             PeriodoAnuncioResponse per = periodoService.obtenerPorId(p.getPeriodoId());
             return new PrecioAnuncioResponse(p, t, per,u);
@@ -90,6 +95,13 @@ public class PrecioAnuncioServiceImpl implements PrecioAnuncioService {
             
             return new PrecioAnuncioResponse(p, null, null,null);
         }
+    }
+
+    @Override
+    public List<PrecioAnuncioResponse> obtenerPorTipoAnuncio(Integer tipoAnuncioId) throws ExcepcionNoExiste {
+        return repo.findByTipoAnuncioId(tipoAnuncioId).stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     

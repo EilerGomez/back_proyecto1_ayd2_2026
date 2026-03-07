@@ -15,6 +15,7 @@ import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteGananciasAnuncianteMaes
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteGananciasMaestroDTO;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteTopComentadasMaestroDTO;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteTopRevistasMaestroDTO;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.servicios.ReporteAdminService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class ReporteAdminController {
             @RequestParam(required = false) 
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam(required = false) 
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) throws ExcepcionNoExiste {
         
         ReporteGananciasMaestroDTO reporte = reporteAdminService.reporteGanancias(inicio, fin);
         return ResponseEntity.ok(reporte);
@@ -65,7 +66,7 @@ public class ReporteAdminController {
     public ResponseEntity<List<ReporteAnunciosCompradosDTO>> getAnunciosComprados(
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) throws ExcepcionNoExiste {
         
         return ResponseEntity.ok(reporteAdminService.reporteAnunciosComprados(tipo, inicio, fin));
     }

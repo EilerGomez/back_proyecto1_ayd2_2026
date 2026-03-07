@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     // (500) 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> manejarCualquierError(Exception ex) {
-        return crearRespuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error inesperado en el sistema.");
+        return crearRespuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error inesperado en el sistema." +ex);
     }
 
     /**

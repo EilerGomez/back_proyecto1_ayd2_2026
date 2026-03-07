@@ -7,13 +7,18 @@ package com.e.gomez.Practica1AyD2.dtoTransacciones;
 import com.e.gomez.Practica1AyD2.modelos.EntidadTransaccionCartera;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
 /**
  *
  * @author eiler
  */
-@Value
+@NoArgsConstructor
+@Getter
+@Setter
 public class TransaccionResponse {
     int id;
     String tipo;

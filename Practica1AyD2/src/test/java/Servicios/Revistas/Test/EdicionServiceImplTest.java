@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Servicios.Revistas.Test;
-
-/**
- *
- * @author eiler
- */
 
 import com.e.gomez.Practica1AyD2.dtoEdicion.EdicionRequest;
 import com.e.gomez.Practica1AyD2.dtoEdicion.EdicionResponse;
@@ -39,63 +30,40 @@ public class EdicionServiceImplTest {
     private EdicionServiceImpl service;
 
     @Test
-    void crearEdicion_DeberiaCalcularOrdinalCorrectamente_ParaPrimeraEdicion() {
-        // Arrange
+    void crearEdicion_DeberiaGenerarFormatoOrdinalCorrecto() {
         EdicionRequest req = new EdicionRequest();
         req.setRevistaId(1);
-        req.setTitulo("Edición Especial");
-        req.setPdfUrl("http://pdf.com");
+        req.setTitulo("Edición Verano");
+        req.setPdfUrl("http://cdn.com/revista.pdf");
 
-        when(repo.countByRevistaId(1)).thenReturn(0L); // 0 + 1 = 1
-        when(repo.save(any(EntidadEdicion.class))).thenAnswer(invocation -> {
-            EntidadEdicion ed = invocation.getArgument(0);
-            ed.setId(100); 
+        when(repo.countByRevistaId(1)).thenReturn(2L); 
+        when(repo.save(any(EntidadEdicion.class))).thenAnswer(i -> {
+            EntidadEdicion ed = i.getArgument(0);
+            ed.setId(500); // Seteamos ID para evitar NPE en el Response
             ed.setFechaPublicacion(LocalDateTime.now());
             return ed;
         });
 
-        // Act
         EdicionResponse res = service.crearEdicion(req);
 
-        // Assert
-        assertEquals("1era Edición", res.getNumeroEdicion());
+        assertNotNull(res);
+        assertEquals("3° Edición", res.getNumeroEdicion());
         verify(repo).save(any(EntidadEdicion.class));
     }
 
     @Test
-    void crearEdicion_DeberiaCalcularOrdinal_ParaCasosEspeciales() {
-        // Probamos el caso n=2 (2da) y n=10 (10va)
-        when(repo.countByRevistaId(1)).thenReturn(1L); // 1+1 = 2
-        when(repo.save(any(EntidadEdicion.class))).thenAnswer(i -> {
-            EntidadEdicion e = i.getArgument(0);
-            e.setId(200); 
-            e.setFechaPublicacion(LocalDateTime.now());
-            return e;
-        });
-
-        EdicionResponse res2 = service.crearEdicion(new EdicionRequest(1, "T", "U"));
-        assertEquals("2da Edición", res2.getNumeroEdicion());
-
-        when(repo.countByRevistaId(1)).thenReturn(9L); // 9+1 = 10
-        EdicionResponse res10 = service.crearEdicion(new EdicionRequest(1, "T", "U"));
-        assertEquals("10ma Edición", res10.getNumeroEdicion());
-    }
-
-    @Test
     void getById_DeberiaRetornarEdicion_SiExiste() throws ExcepcionNoExiste {
-        // Arrange
         EntidadEdicion entidad = new EntidadEdicion();
         entidad.setId(5);
-        entidad.setRevistaId(1);
-        entidad.setNumeroEdicion("1era Edición");
+        entidad.setRevistaId(1); // Importante: setear para evitar NPE
+        entidad.setTitulo("Test");
+        entidad.setNumeroEdicion("1° Edición");
         entidad.setFechaPublicacion(LocalDateTime.now());
 
         when(repo.findById(5)).thenReturn(Optional.of(entidad));
 
-        // Act
         EdicionResponse res = service.getById(5);
 
-        // Assert
         assertNotNull(res);
         assertEquals(5, res.getId());
     }
@@ -103,35 +71,46 @@ public class EdicionServiceImplTest {
     @Test
     void getById_DeberiaLanzarExcepcion_SiNoExiste() {
         when(repo.findById(anyInt())).thenReturn(Optional.empty());
-
         assertThrows(ExcepcionNoExiste.class, () -> service.getById(99));
     }
 
     @Test
     void listarPorRevista_DeberiaRetornarLista() {
-        // Arrange
         EntidadEdicion e1 = new EntidadEdicion();
-        e1.setId(1);
+        e1.setId(10);
         e1.setRevistaId(1);
-        e1.setNumeroEdicion("1era"); 
+        e1.setTitulo("Revista 1");
+        e1.setNumeroEdicion("1°");
         e1.setFechaPublicacion(LocalDateTime.now());
-        
+
         when(repo.findByRevistaIdOrderByFechaPublicacionDesc(1)).thenReturn(List.of(e1));
 
-        // Act
         List<EdicionResponse> lista = service.listarPorRevista(1);
 
-        // Assert
         assertFalse(lista.isEmpty());
         assertEquals(1, lista.size());
+        assertEquals(10, lista.get(0).getId());
     }
 
     @Test
-    void eliminar_DeberiaLlamarAlRepositorio() {
-        // Act
-        service.eliminar(1);
+    void findAll_DeberiaMapearListaCompleta() {
+        EntidadEdicion e1 = new EntidadEdicion();
+        e1.setId(1);
+        e1.setRevistaId(1);
+        e1.setFechaPublicacion(LocalDateTime.now());
 
-        // Assert
-        verify(repo, times(1)).deleteById(1);
+        when(repo.findAll()).thenReturn(List.of(e1));
+
+        List<EdicionResponse> resultado = service.findAll();
+
+        assertEquals(1, resultado.size());
+        assertNotNull(resultado.get(0).getId());
+        verify(repo).findAll();
+    }
+
+    @Test
+    void eliminar_DeberiaLlamarDeleteById() {
+        service.eliminar(10);
+        verify(repo, times(1)).deleteById(10);
     }
 }

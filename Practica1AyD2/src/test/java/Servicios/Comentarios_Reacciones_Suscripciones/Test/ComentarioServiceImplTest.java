@@ -1,21 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Servicios.Comentarios_Reacciones_Suscripciones.Test;
-
-/**
- *
- * @author eiler
- */
-
 
 import com.e.gomez.Practica1AyD2.dtoComentarios.ComentarioRequest;
 import com.e.gomez.Practica1AyD2.dtoComentarios.ComentarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadComentario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.ComentarioRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import com.e.gomez.Practica1AyD2.servicios.ComentarioServiceImpl;
 import com.e.gomez.Practica1AyD2.servicios.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +30,9 @@ public class ComentarioServiceImplTest {
 
     @Mock
     private ComentarioRepositorio repo;
+    
+    @Mock
+    private PerfilRepositorio perfilRepo;
 
     @Mock
     private UsuarioService usuarioService;
@@ -46,6 +41,7 @@ public class ComentarioServiceImplTest {
     private ComentarioServiceImpl service;
 
     private EntidadUsuario usuarioEjemplo;
+    private EntidadPerfil perfilEjemplo;
     private EntidadComentario comentarioEjemplo;
     private ComentarioRequest requestEjemplo;
 
@@ -57,6 +53,12 @@ public class ComentarioServiceImplTest {
         usuarioEjemplo.setNombre("Nombre");
         usuarioEjemplo.setApellido("Apellido");
         usuarioEjemplo.setCorreo("user@test.com");
+        usuarioEjemplo.setEstado("ACTIVO");
+
+        perfilEjemplo = new EntidadPerfil();
+        perfilEjemplo.setUsuarioId(10);
+        perfilEjemplo.setFoto_url("http://test.com/foto.jpg");
+        perfilEjemplo.setDescripcion("Bio de prueba");
 
         comentarioEjemplo = new EntidadComentario();
         comentarioEjemplo.setId(1);
@@ -72,6 +74,7 @@ public class ComentarioServiceImplTest {
     void crear_DeberiaGuardarCorrectamente() throws ExcepcionNoExiste {
         // Arrange
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(perfilRepo.findByUsuarioId(10)).thenReturn(Optional.of(perfilEjemplo));
         when(repo.save(any(EntidadComentario.class))).thenReturn(comentarioEjemplo);
 
         // Act
@@ -89,6 +92,7 @@ public class ComentarioServiceImplTest {
         // Arrange
         when(repo.findById(1)).thenReturn(Optional.of(comentarioEjemplo));
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(perfilRepo.findByUsuarioId(10)).thenReturn(Optional.of(perfilEjemplo));
         when(repo.save(any(EntidadComentario.class))).thenAnswer(i -> i.getArgument(0));
 
         // Act
@@ -134,6 +138,7 @@ public class ComentarioServiceImplTest {
         // Arrange
         when(repo.findByRevistaIdOrderByFechaCreacionDesc(5)).thenReturn(List.of(comentarioEjemplo));
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(perfilRepo.findByUsuarioId(10)).thenReturn(Optional.of(perfilEjemplo));
 
         // Act
         List<ComentarioResponse> lista = service.listarPorRevista(5);
@@ -149,6 +154,7 @@ public class ComentarioServiceImplTest {
         // Arrange
         when(repo.findByUsuarioIdOrderByFechaCreacionDesc(10)).thenReturn(List.of(comentarioEjemplo));
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(perfilRepo.findByUsuarioId(10)).thenReturn(Optional.of(perfilEjemplo));
 
         // Act
         List<ComentarioResponse> lista = service.listarPorUsuario(10);
@@ -156,5 +162,6 @@ public class ComentarioServiceImplTest {
         // Assert
         assertEquals(1, lista.size());
         assertNotNull(lista.get(0).getUsuario());
+        assertEquals("http://test.com/foto.jpg", lista.get(0).getUsuario().getPerfilUrl());
     }
 }

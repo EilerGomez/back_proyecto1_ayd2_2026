@@ -6,13 +6,18 @@ package com.e.gomez.Practica1AyD2.dtoAnuncios;
 
 import com.e.gomez.Practica1AyD2.modelos.EntidadPrecioBloqueo;
 import java.math.BigDecimal;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
 /**
  *
  * @author eiler
  */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
 public class PrecioBloqueoResponse {
     int id;
     int revistaId;

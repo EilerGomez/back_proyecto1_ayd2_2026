@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class TransaccionCarteraServiceImpl implements TransaccionCarteraService {
 
     private final TransaccionCarteraRepositorio repo;
-    private final CarteraService carteraService; // Inyectamos el servicio de Cartera
+    private final CarteraService carteraService; 
 
     public TransaccionCarteraServiceImpl(TransaccionCarteraRepositorio repo, CarteraService carteraService) {
         this.repo = repo;

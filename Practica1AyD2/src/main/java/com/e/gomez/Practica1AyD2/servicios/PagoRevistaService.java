@@ -12,6 +12,7 @@ package com.e.gomez.Practica1AyD2.servicios;
 import com.e.gomez.Practica1AyD2.dtoPagosyCostos.PagoRevistaRequest;
 import com.e.gomez.Practica1AyD2.dtoPagosyCostos.PagoRevistaResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PagoRevistaService {
@@ -19,4 +20,6 @@ public interface PagoRevistaService {
     PagoRevistaResponse procesarPago(PagoRevistaRequest req, Integer carteraId) throws ExcepcionNoExiste;
     List<PagoRevistaResponse> listarPagosPorRevista(Integer revistaId) throws ExcepcionNoExiste;
     List<PagoRevistaResponse> listarPagosPorEditor(Integer editorId) throws ExcepcionNoExiste;
+    
+    PagoRevistaResponse actualizarFechaFin(Integer revistaId, LocalDate fechaFin) throws ExcepcionNoExiste;
 }

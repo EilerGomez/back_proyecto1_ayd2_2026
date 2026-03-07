@@ -21,4 +21,6 @@ public interface PerfilRepositorio extends JpaRepository<EntidadPerfil, Integer>
     
     boolean existsByUsuarioId (Integer usuarioId);
     
+    EntidadPerfil getByUsuarioId(Integer usuarioId);
+    
 }

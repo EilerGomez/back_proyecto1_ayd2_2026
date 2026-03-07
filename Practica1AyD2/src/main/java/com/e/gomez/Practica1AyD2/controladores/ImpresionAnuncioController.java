@@ -11,6 +11,7 @@ package com.e.gomez.Practica1AyD2.controladores;
 
 import com.e.gomez.Practica1AyD2.dtoAnuncios.ImpresionAnuncioRequest;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.ImpresionAnuncioResponse;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.servicios.ImpresionAnuncioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class ImpresionAnuncioController {
 
     // Endpoint para cuando el frontend muestra el anuncio
     @PostMapping("/registrar")
-    public ResponseEntity<Void> registrar(@RequestBody ImpresionAnuncioRequest request) {
+    public ResponseEntity<Void> registrar(@RequestBody ImpresionAnuncioRequest request) throws ExcepcionNoExiste {
         service.registrarImpresion(request);
         return ResponseEntity.ok().build();
     }

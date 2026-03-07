@@ -12,6 +12,7 @@ package com.e.gomez.Practica1AyD2.servicios;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.BloqueoAnuncioRequest;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.BloqueoAnuncioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BloqueoAnuncioService {
@@ -23,4 +24,6 @@ public interface BloqueoAnuncioService {
     
     // Traer el bloqueo que está actualmente vigente para una revista
     BloqueoAnuncioResponse obtenerActivoPorRevista(Integer revistaId) throws ExcepcionNoExiste;
+    
+    BloqueoAnuncioResponse actualizarFechaFin(Integer pagoId, LocalDateTime fechaFin) throws ExcepcionNoExiste;
 }

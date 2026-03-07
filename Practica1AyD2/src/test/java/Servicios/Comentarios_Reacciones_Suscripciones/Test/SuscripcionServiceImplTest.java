@@ -4,11 +4,13 @@ import com.e.gomez.Practica1AyD2.dtoRevistas.RevistaResponse;
 import com.e.gomez.Practica1AyD2.dtoSuscripciones.SuscricpionResponseByRevistaId;
 import com.e.gomez.Practica1AyD2.dtoSuscripciones.SuscripcionRequest;
 import com.e.gomez.Practica1AyD2.dtoSuscripciones.dtoRevistasPorSuscripcionByUsuarioResponse;
-import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.SuscripcionRepositorio;
 import com.e.gomez.Practica1AyD2.servicios.RevistaService;
 import com.e.gomez.Practica1AyD2.servicios.SuscripcionServiceImpl;
@@ -31,15 +33,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT) // Evita errores por mocks no usados en tests específicos
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SuscripcionServiceImplTest {
 
     @Mock
     private SuscripcionRepositorio repo;
     @Mock
+    private RevistaRepositorio revistaRepo; // Mock añadido
+    @Mock
     private RevistaService servicioRevista;
     @Mock
     private UsuarioService usuarioService;
+    @Mock
+    private PerfilRepositorio perfilRepo; // Mock añadido
 
     @InjectMocks
     private SuscripcionServiceImpl service;
@@ -47,6 +53,7 @@ public class SuscripcionServiceImplTest {
     private EntidadSuscripcion suscripcionEjemplo;
     private SuscripcionRequest requestEjemplo;
     private EntidadUsuario usuarioEjemplo;
+    private EntidadPerfil perfilEjemplo; // Objeto para el mock
     private RevistaResponse revistaResponseEjemplo;
 
     @BeforeEach
@@ -55,10 +62,13 @@ public class SuscripcionServiceImplTest {
         usuarioEjemplo = new EntidadUsuario();
         usuarioEjemplo.setId(10);
         usuarioEjemplo.setUsername("lector1");
-        usuarioEjemplo.setNombre("Juan");
-        usuarioEjemplo.setApellido("Perez");
 
-        // Datos de Suscripción (ID=1, RevistaID=5)
+        // Datos de Perfil
+        perfilEjemplo = new EntidadPerfil();
+        perfilEjemplo.setUsuarioId(10);
+        perfilEjemplo.setFoto_url("http://test.com/foto.jpg");
+
+        // Datos de Suscripción
         suscripcionEjemplo = new EntidadSuscripcion();
         suscripcionEjemplo.setId(1);
         suscripcionEjemplo.setRevistaId(5);
@@ -66,24 +76,26 @@ public class SuscripcionServiceImplTest {
         suscripcionEjemplo.setFechaSuscripcion(LocalDate.now());
         suscripcionEjemplo.setActiva(true);
 
-        // Datos de Request
+        // Request
         requestEjemplo = new SuscripcionRequest();
         requestEjemplo.setRevistaId(5);
         requestEjemplo.setUsuarioId(10);
         requestEjemplo.setFechaSuscripcion(LocalDate.now());
         requestEjemplo.setActiva(true);
 
-        // Mock de RevistaResponse (usado en listados)
+        // Mock de RevistaResponse
         revistaResponseEjemplo = mock(RevistaResponse.class);
         when(revistaResponseEjemplo.getTitulo()).thenReturn("Revista Científica");
+        
+        // Comportamiento global del Perfil (evita NullPointer en la mayoría de tests)
+        when(perfilRepo.getByUsuarioId(10)).thenReturn(perfilEjemplo);
     }
 
-    //
     @Test
     void suscribir_DeberiaGuardar_CuandoNoExisteDuplicado() throws Exception {
         when(repo.existsByRevistaIdAndUsuarioId(5, 10)).thenReturn(false);
-        when(repo.save(any(EntidadSuscripcion.class))).thenReturn(suscripcionEjemplo);
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(repo.save(any(EntidadSuscripcion.class))).thenReturn(suscripcionEjemplo);
 
         SuscricpionResponseByRevistaId res = service.suscribir(requestEjemplo);
 
@@ -92,7 +104,6 @@ public class SuscripcionServiceImplTest {
         verify(repo).save(any(EntidadSuscripcion.class));
     }
 
-    // 
     @Test
     void suscribir_DeberiaLanzarExcepcion_CuandoYaExiste() {
         when(repo.existsByRevistaIdAndUsuarioId(5, 10)).thenReturn(true);
@@ -101,11 +112,9 @@ public class SuscripcionServiceImplTest {
         verify(repo, never()).save(any());
     }
 
-    // 
     @Test
     void listarPorUsuario_DeberiaRetornarListaConRevistas() throws ExcepcionNoExiste {
         when(repo.findByUsuarioId(10)).thenReturn(List.of(suscripcionEjemplo));
-        // 
         when(servicioRevista.getById(5)).thenReturn(revistaResponseEjemplo);
 
         List<dtoRevistasPorSuscripcionByUsuarioResponse> lista = service.listarPorUsuario(10);
@@ -115,7 +124,6 @@ public class SuscripcionServiceImplTest {
         assertEquals("Revista Científica", lista.get(0).getRevista().getTitulo());
     }
 
-    // 
     @Test
     void listarPorRevista_DeberiaRetornarListaConUsuarios() throws ExcepcionNoExiste {
         when(repo.findByRevistaId(5)).thenReturn(List.of(suscripcionEjemplo));
@@ -126,9 +134,9 @@ public class SuscripcionServiceImplTest {
         assertFalse(lista.isEmpty());
         assertEquals(1, lista.size());
         assertEquals("lector1", lista.get(0).getUsuario().getUsername());
+        assertEquals("http://test.com/foto.jpg", lista.get(0).getUsuario().getPerfilUrl());
     }
 
-    // 
     @Test
     void cambiarEstado_DeberiaModificarBooleano() throws ExcepcionNoExiste {
         when(repo.findById(1)).thenReturn(Optional.of(suscripcionEjemplo));
@@ -139,7 +147,6 @@ public class SuscripcionServiceImplTest {
         verify(repo).save(suscripcionEjemplo);
     }
 
-    // 
     @Test
     void cancelarSuscripcion_DeberiaLlamarDelete() {
         service.cancelarSuscripcion(1);

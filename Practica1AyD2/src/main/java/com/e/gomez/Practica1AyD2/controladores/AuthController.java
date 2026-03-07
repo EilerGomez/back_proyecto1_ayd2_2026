@@ -14,6 +14,7 @@ import com.e.gomez.Practica1AyD2.dtoAuth.LoginResponse;
 import com.e.gomez.Practica1AyD2.dtoAuth.LogoutResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionCredencialesInvalidas;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.mantenimiento.MantenimientoSistemaService;
 import com.e.gomez.Practica1AyD2.servicios.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,19 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final MantenimientoSistemaService mantenimiento;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,MantenimientoSistemaService mantenimiento) {
         this.authService = authService;
+        this.mantenimiento=mantenimiento;
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req)
             throws ExcepcionNoExiste, ExcepcionCredencialesInvalidas {
+        mantenimiento.desactivarAnunciosExpirados();
+        mantenimiento.desactivarBloqueosDeAnunciosExpirados();
+        mantenimiento.desactivarRevistasVencidas();
         return ResponseEntity.ok(authService.login(req));
     }
 

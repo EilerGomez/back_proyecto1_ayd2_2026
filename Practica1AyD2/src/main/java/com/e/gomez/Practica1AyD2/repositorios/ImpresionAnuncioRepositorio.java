@@ -36,7 +36,7 @@ public interface ImpresionAnuncioRepositorio extends JpaRepository<EntidadImpres
         @Param("fin") LocalDateTime fin);
     
     
-    @Query("SELECT i.anuncioId, i.revistaId, COUNT(i.id) " +
+    @Query("SELECT i.anuncioId, i.revistaId, i.urlPagina, COUNT(i.id) " +
        "FROM EntidadImpresionAnuncio i " +
        "WHERE (:inicio IS NULL OR i.fechaMostrado >= :inicio) " +
        "AND (:fin IS NULL OR i.fechaMostrado <= :fin) " +

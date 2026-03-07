@@ -60,4 +60,18 @@ public class CompraAnuncioController {
         compraService.desactivarManualmente(id, responsable, fecha);
         return ResponseEntity.noContent().build();
     }
+ 
+    @GetMapping("/anunciante/{anuncianteId}")
+    public ResponseEntity<List<CompraAnuncioResponseDetallado>> listarPorAnunciante(@PathVariable Integer anuncianteId) throws ExcepcionNoExiste {
+        return ResponseEntity.ok(compraService.listarPorAnunciante(anuncianteId));
+    }
+  
+    @PatchMapping("/{id}/fecha-fin")
+    public ResponseEntity<CompraAnuncioResponseSimple> cambiarFechaFin(
+            @PathVariable Integer id,
+            @RequestParam LocalDateTime fechaFin) throws ExcepcionNoExiste {
+        
+        return ResponseEntity.ok(compraService.CambiarFechaFin(id, fechaFin));
+    }
+    
 }

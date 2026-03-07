@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class ImpresionAnuncioRequest {
     private Integer anuncioId;
-    private Integer compraId;
     private Integer revistaId;
     private String urlPagina;
 }

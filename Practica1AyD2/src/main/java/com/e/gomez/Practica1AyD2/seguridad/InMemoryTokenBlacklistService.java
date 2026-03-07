@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class InMemoryTokenBlacklistService implements TokenBlacklistService {
 
-    // jti -> expiresAtMillis
     private final Map<String, Long> store = new ConcurrentHashMap<>();
 
     @Override
@@ -30,7 +29,6 @@ public class InMemoryTokenBlacklistService implements TokenBlacklistService {
         Long exp = store.get(jti);
         if (exp == null) return false;
 
-        // limpieza simple
         if (System.currentTimeMillis() > exp) {
             store.remove(jti);
             return false;

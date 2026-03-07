@@ -151,4 +151,29 @@ public class CategoriaServiceImplTest {
         // Assert
         verify(repositorio, times(1)).delete(cat);
     }
+    
+    @Test
+    void actualizar_deberiaModificar_siElNombreEsElMismoQueYaTenia() throws Exception {
+        Integer id = 1;
+        EntidadCategoria existente = new EntidadCategoria(id, "Deportes", "Vieja Desc");
+        
+        CategoriaRequest req = new CategoriaRequest();
+        req.setNombre("Deportes");
+        req.setDescripcion("Nueva Desc");
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+        when(repositorio.save(any(EntidadCategoria.class))).thenAnswer(i -> i.getArgument(0));
+
+        // Act
+        EntidadCategoria resultado = service.actualizar(id, req);
+
+        // Assert
+        assertEquals("Deportes", resultado.getNombre());
+        assertEquals("Nueva Desc", resultado.getDescripcion());
+        
+        verify(repositorio, never()).existsByNombre(anyString());
+        verify(repositorio).save(existente);
+    }
+
+  
 }

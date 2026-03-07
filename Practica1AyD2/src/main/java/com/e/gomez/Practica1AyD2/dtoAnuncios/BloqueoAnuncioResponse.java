@@ -7,13 +7,21 @@ package com.e.gomez.Practica1AyD2.dtoAnuncios;
 import com.e.gomez.Practica1AyD2.modelos.EntidadBloqueoAnuncio;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
 /**
  *
  * @author eiler
  */
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 public class BloqueoAnuncioResponse {
     int id;
     int revistaId;

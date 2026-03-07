@@ -33,10 +33,10 @@ public class JwtService {
         Date now = new Date();
         Date exp = new Date(now.getTime() + expirationMs);
 
-        String jti = UUID.randomUUID().toString(); // ← IMPORTANTE
+        String jti = UUID.randomUUID().toString();
 
         return Jwts.builder()
-                .id(jti) // ← AQUÍ SE GUARDA EL JTI
+                .id(jti) 
                 .subject(username)
                 .issuedAt(now)
                 .expiration(exp)

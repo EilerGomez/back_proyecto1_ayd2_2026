@@ -170,4 +170,49 @@ class PerfilServiceImplTest {
         verify(repository).findByUsuarioId(usuarioId);
         verify(repository, never()).save(any());
     }
+    
+    @Test
+    void updatePerfil_actualizaTodosLosCampos_cuandoTodosVienenEnRequest() throws ExcepcionNoExiste {
+        Integer usuarioId = 1;
+        EntidadPerfil perfilBD = new EntidadPerfil();
+        perfilBD.setUsuarioId(usuarioId);
+
+        NuevoPerfilRequest req = new NuevoPerfilRequest();
+        req.setFoto_url("nuevaFoto");
+        req.setHobbies("nuevosHobbies");
+        req.setIntereses("nuevosIntereses");
+        req.setDescripcion("nuevaDesc");
+        req.setGustos("nuevosGustos");
+
+        when(repository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfilBD));
+        when(repository.save(any(EntidadPerfil.class))).thenAnswer(i -> i.getArgument(0));
+
+        EntidadPerfil resultado = service.updatePerfil(usuarioId, req);
+
+        assertEquals("nuevaFoto", resultado.getFoto_url());
+        assertEquals("nuevosHobbies", resultado.getHobbies());
+        assertEquals("nuevosIntereses", resultado.getIntereses());
+        assertEquals("nuevaDesc", resultado.getDescripcion());
+        assertEquals("nuevosGustos", resultado.getGustos());
+        verify(repository).save(perfilBD);
+    }
+    
+    @Test
+    void updatePerfil_noCambiaNada_cuandoRequestVieneVacio() throws ExcepcionNoExiste {
+        Integer usuarioId = 1;
+        EntidadPerfil perfilBD = new EntidadPerfil();
+        perfilBD.setUsuarioId(usuarioId);
+        perfilBD.setHobbies("hobbies_originales");
+
+        NuevoPerfilRequest req = new NuevoPerfilRequest(); // Todo null
+
+        when(repository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfilBD));
+        when(repository.save(any(EntidadPerfil.class))).thenAnswer(i -> i.getArgument(0));
+
+        EntidadPerfil resultado = service.updatePerfil(usuarioId, req);
+
+        assertEquals("hobbies_originales", resultado.getHobbies());
+        assertNull(resultado.getFoto_url());
+        verify(repository).save(perfilBD);
+    }
 }

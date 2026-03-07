@@ -12,9 +12,17 @@ package com.e.gomez.Practica1AyD2.dtoAnuncios;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPrecioAnuncio;
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+
 public class PrecioAnuncioResponse {
     int id;
     BigDecimal precio;

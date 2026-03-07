@@ -10,6 +10,7 @@ import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteGananciasAnuncianteMaes
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteGananciasMaestroDTO;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteTopComentadasMaestroDTO;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.ReporteTopRevistasMaestroDTO;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.List;
  */
 public interface ReporteAdminService {
     // 1. Ganancias (Revista, Costo, Anuncios, Pagos, Totales)
-    ReporteGananciasMaestroDTO reporteGanancias(LocalDate inicio, LocalDate fin);
+    ReporteGananciasMaestroDTO reporteGanancias(LocalDate inicio, LocalDate fin)throws ExcepcionNoExiste;
 
-    List<ReporteAnunciosCompradosDTO> reporteAnunciosComprados(String tipo, LocalDateTime inicio, LocalDateTime fin);
+    List<ReporteAnunciosCompradosDTO> reporteAnunciosComprados(String tipo, LocalDateTime inicio, LocalDateTime fin) throws ExcepcionNoExiste;
     ReporteGananciasAnuncianteMaestroDTO reporteGananciasPorAnunciante(Integer anuncianteId, LocalDateTime inicio, LocalDateTime fin);
     ReporteTopRevistasMaestroDTO reporteTopRevistas(LocalDate inicio, LocalDate fin);
     ReporteTopComentadasMaestroDTO reporteTopComentadas(LocalDateTime inicio, LocalDateTime fin);

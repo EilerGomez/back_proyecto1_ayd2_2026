@@ -9,6 +9,7 @@ import com.e.gomez.Practica1AyD2.dtoAnuncios.BloqueoAnuncioResponse;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.PrecioBloqueoResponse;
 import com.e.gomez.Practica1AyD2.dtoTransacciones.TransaccionRequest;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.mantenimiento.MantenimientoSistemaService;
 import com.e.gomez.Practica1AyD2.modelos.EntidadBloqueoAnuncio;
 import com.e.gomez.Practica1AyD2.repositorios.BloqueoAnuncioRepositorio;
 import java.math.BigDecimal;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class BloqueoAnuncioServiceImpl implements BloqueoAnuncioService {
+    
+    private final MantenimientoSistemaService mantenimiento;
 
     private final BloqueoAnuncioRepositorio repo;
     private final PrecioBloqueoService precioBloqueoService;
@@ -32,11 +35,13 @@ public class BloqueoAnuncioServiceImpl implements BloqueoAnuncioService {
     public BloqueoAnuncioServiceImpl(BloqueoAnuncioRepositorio repo, 
                                      PrecioBloqueoService precioBloqueoService,
                                      CarteraService carteraService,
-                                     TransaccionCarteraService transaccionService) {
+                                     TransaccionCarteraService transaccionService,
+                                     MantenimientoSistemaService mantenimiento) {
         this.repo = repo;
         this.precioBloqueoService = precioBloqueoService;
         this.carteraService = carteraService;
         this.transaccionService = transaccionService;
+        this.mantenimiento=mantenimiento;
     }
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -106,5 +111,18 @@ public class BloqueoAnuncioServiceImpl implements BloqueoAnuncioService {
                 .findFirst()
                 .map(BloqueoAnuncioResponse::new)
                 .orElseThrow(() -> new ExcepcionNoExiste("La revista " + revistaId + " no tiene un bloqueo de anuncios vigente."));
+    }
+
+    @Override
+    public BloqueoAnuncioResponse actualizarFechaFin(Integer pagoId, LocalDateTime fechaFin) throws ExcepcionNoExiste {
+        LocalDateTime hoy = LocalDateTime.now();
+        
+        EntidadBloqueoAnuncio entidad = repo.getById(pagoId);
+        entidad.setFechaFin(fechaFin);
+        repo.save(entidad);
+        if(hoy.isAfter(fechaFin)){
+            mantenimiento.desactivarBloqueosDeAnunciosExpirados();
+        }
+        return new BloqueoAnuncioResponse(entidad);
     }
 }

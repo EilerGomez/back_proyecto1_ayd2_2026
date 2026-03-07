@@ -1,22 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Servicios.Comentarios_Reacciones_Suscripciones.Test;
-
-/**
- *
- * @author eiler
- */
 
 import com.e.gomez.Practica1AyD2.dtoLikes.LikeRequest;
 import com.e.gomez.Practica1AyD2.dtoLikes.LikeResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadLike;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.LikeRepositorio;
 import com.e.gomez.Practica1AyD2.servicios.LikeServiceImpl;
+import com.e.gomez.Practica1AyD2.servicios.PerfilService;
 import com.e.gomez.Practica1AyD2.servicios.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,10 +34,14 @@ public class LikeServiceImplTest {
     @Mock
     private UsuarioService usuarioService;
 
+    @Mock
+    private PerfilService perfilService; // Mock añadido
+
     @InjectMocks
     private LikeServiceImpl service;
 
     private EntidadUsuario usuarioEjemplo;
+    private EntidadPerfil perfilEjemplo; // Objeto para el mock
     private EntidadLike likeEjemplo;
     private LikeRequest requestEjemplo;
 
@@ -55,6 +51,10 @@ public class LikeServiceImplTest {
         usuarioEjemplo.setId(10);
         usuarioEjemplo.setUsername("testuser");
         usuarioEjemplo.setCorreo("test@mail.com");
+
+        perfilEjemplo = new EntidadPerfil();
+        perfilEjemplo.setUsuarioId(10);
+        perfilEjemplo.setFoto_url("http://test.com/foto.jpg");
 
         likeEjemplo = new EntidadLike();
         likeEjemplo.setId(1);
@@ -69,8 +69,9 @@ public class LikeServiceImplTest {
     void darLike_DeberiaGuardar_CuandoNoExisteDuplicado() throws ExcepcionNoExiste, ExcepcionEntidadDuplicada {
         // Arrange
         when(repo.existsByRevistaIdAndUsuarioId(5, 10)).thenReturn(false);
-        when(repo.save(any(EntidadLike.class))).thenReturn(likeEjemplo);
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(perfilService.findByUsuarioId(10)).thenReturn(perfilEjemplo); // Configurar Mock Perfil
+        when(repo.save(any(EntidadLike.class))).thenReturn(likeEjemplo);
 
         // Act
         LikeResponse result = service.darLike(requestEjemplo);
@@ -78,6 +79,7 @@ public class LikeServiceImplTest {
         // Assert
         assertNotNull(result);
         assertEquals(10, result.getUsuario().getId());
+        assertEquals("http://test.com/foto.jpg", result.getUsuario().getPerfilUrl());
         verify(repo).save(any(EntidadLike.class));
     }
 
@@ -117,6 +119,7 @@ public class LikeServiceImplTest {
         // Arrange
         when(repo.findByRevistaId(5)).thenReturn(List.of(likeEjemplo));
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
+        when(perfilService.findByUsuarioId(10)).thenReturn(perfilEjemplo); // Configurar Mock Perfil
 
         // Act
         List<LikeResponse> lista = service.findByRevistaId(5);

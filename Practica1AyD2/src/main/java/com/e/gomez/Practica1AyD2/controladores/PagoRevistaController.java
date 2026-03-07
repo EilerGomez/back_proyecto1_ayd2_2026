@@ -13,6 +13,7 @@ import com.e.gomez.Practica1AyD2.dtoPagosyCostos.PagoRevistaRequest;
 import com.e.gomez.Practica1AyD2.dtoPagosyCostos.PagoRevistaResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.servicios.PagoRevistaService;
+import java.time.LocalDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,13 @@ public class PagoRevistaController {
     @GetMapping("/editor/{editorId}")
     public ResponseEntity<List<PagoRevistaResponse>> listarPorEditor(@PathVariable Integer editorId) throws ExcepcionNoExiste {
         return ResponseEntity.ok(pagoService.listarPagosPorEditor(editorId));
+    }
+
+    @PatchMapping("/{id}/fecha-fin")
+    public ResponseEntity<PagoRevistaResponse> actualizarFechaFin(
+            @PathVariable Integer id,
+            @RequestParam LocalDate fechaFin) throws ExcepcionNoExiste {
+        
+        return ResponseEntity.ok(pagoService.actualizarFechaFin(id, fechaFin));
     }
 }

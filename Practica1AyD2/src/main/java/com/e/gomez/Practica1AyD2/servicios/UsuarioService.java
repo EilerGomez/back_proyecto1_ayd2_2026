@@ -24,5 +24,5 @@ public interface UsuarioService {
     void eliminarUsuario (Integer id) throws ExcepcionNoExiste;
     
     UsuarioResponse actializarUsuario (Integer id, UsuarioUpdateRequest dataAActualizar) throws ExcepcionEntidadDuplicada,ExcepcionNoExiste;
-    
+    String generarCodigoRecuperacion();
 }

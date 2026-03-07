@@ -11,10 +11,11 @@ package com.e.gomez.Practica1AyD2.servicios;
 
 import com.e.gomez.Practica1AyD2.dtoAnuncios.ImpresionAnuncioRequest;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.ImpresionAnuncioResponse;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import java.util.List;
 
 public interface ImpresionAnuncioService {
-    void registrarImpresion(ImpresionAnuncioRequest req);
+    void registrarImpresion(ImpresionAnuncioRequest req) throws ExcepcionNoExiste;
     long obtenerTotalVistasPorAnuncio(Integer anuncioId);
     List<ImpresionAnuncioResponse> listarPorRevista(Integer revistaId);
 }

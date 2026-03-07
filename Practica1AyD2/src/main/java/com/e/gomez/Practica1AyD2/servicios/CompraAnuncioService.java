@@ -20,4 +20,9 @@ public interface CompraAnuncioService {
     List<CompraAnuncioResponseDetallado> listarPorEstado(String estado);
     List<CompraAnuncioResponseDetallado> listarPorDesactivadoPor(String desactivadoPor);
     void desactivarManualmente(Integer compraId, String responsable, LocalDateTime fecha) throws ExcepcionNoExiste;
+    
+    List<CompraAnuncioResponseDetallado> listarPorAnunciante(Integer anuncianteId)throws ExcepcionNoExiste;
+    
+    CompraAnuncioResponseSimple CambiarFechaFin(Integer idCompra, LocalDateTime fechaFin) throws ExcepcionNoExiste;
+
 }

@@ -34,16 +34,9 @@ public class EdicionServiceImpl implements EdicionService {
     }
 
     private String generarOrdinal(long n) {
-        if (n == 1||n==11) return n+"era Edición";
-        if (n == 2||n==12) return n+"da Edición";
-        if (n == 3||n==13) return n+"ra Edición";
-        if(n == 7||n==17) return n+"ma Edición";
-        if(n == 8||n==18) return n+"va Edición";
-        if(n == 9||n==19) return n+"na Edición";
-        if(n==10) return n +"ma Edición";
-        return n + "ta Edición";
+        return n + "° Edición";
     }
-    
+
     
 
     @Override

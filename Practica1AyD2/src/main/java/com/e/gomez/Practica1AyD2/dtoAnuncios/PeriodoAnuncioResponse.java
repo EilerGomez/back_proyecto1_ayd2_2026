@@ -10,9 +10,16 @@ package com.e.gomez.Practica1AyD2.dtoAnuncios;
  */
 
 import com.e.gomez.Practica1AyD2.modelos.EntidadPeriodoAnuncio;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 public class PeriodoAnuncioResponse {
     int id;
     String codigo;

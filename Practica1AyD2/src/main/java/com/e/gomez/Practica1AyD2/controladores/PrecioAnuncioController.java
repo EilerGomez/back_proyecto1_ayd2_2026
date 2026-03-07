@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/V1/anuncios/precios")
+@RequestMapping("/v1/anuncios/precios")
 public class PrecioAnuncioController {
 
     private final PrecioAnuncioService precioAnuncioService;
@@ -52,5 +52,11 @@ public class PrecioAnuncioController {
     public ResponseEntity<Void> desactivar(@PathVariable Integer id) throws ExcepcionNoExiste {
         precioAnuncioService.desactivar(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    // --- LISTAR POR TIPO DE ANUNCIO ---
+    @GetMapping("/tipo/{tipoAnuncioId}")
+    public ResponseEntity<List<PrecioAnuncioResponse>> obtenerPorTipoAnuncio(@PathVariable Integer tipoAnuncioId) throws ExcepcionNoExiste {
+        return ResponseEntity.ok(precioAnuncioService.obtenerPorTipoAnuncio(tipoAnuncioId));
     }
 }

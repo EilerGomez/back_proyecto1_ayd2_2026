@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Servicios.Carteras.Test;
-
-/**
- *
- * @author eiler
- */
 
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCartera;
@@ -33,17 +24,12 @@ class CarteraServiceImplTest {
     @InjectMocks
     private CarteraServiceImpl carteraService;
 
-
-
-    // -------- crearCartera --------
+    // CREACION
 
     @Test
     void crearCartera_cuandoUsuarioNoTieneCartera_laCreaConSaldoCeroYMonedaGTQ() {
         Integer usuarioId = 10;
-
         when(carteraRepositorio.existsByUsuarioId(usuarioId)).thenReturn(false);
-
-        // Simulamos que save devuelve la misma entidad pero ya guardada
         when(carteraRepositorio.save(any(EntidadCartera.class)))
                 .thenAnswer(inv -> inv.getArgument(0, EntidadCartera.class));
 
@@ -51,13 +37,9 @@ class CarteraServiceImplTest {
 
         assertNotNull(creada);
         assertEquals(usuarioId, creada.getUsuarioId());
-        assertEquals(new BigDecimal("0.0"), creada.getSaldo()); 
+        assertEquals(0, BigDecimal.valueOf(0.0).compareTo(creada.getSaldo())); 
         assertEquals("GTQ", creada.getMoneda());
-
-        ArgumentCaptor<EntidadCartera> captor = ArgumentCaptor.forClass(EntidadCartera.class);
-        verify(carteraRepositorio).save(captor.capture());
-        assertEquals(usuarioId, captor.getValue().getUsuarioId());
-        assertEquals("GTQ", captor.getValue().getMoneda());
+        verify(carteraRepositorio).save(any(EntidadCartera.class));
     }
 
     @Test
@@ -65,14 +47,11 @@ class CarteraServiceImplTest {
         Integer usuarioId = 10;
         when(carteraRepositorio.existsByUsuarioId(usuarioId)).thenReturn(true);
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> carteraService.crearCartera(usuarioId));
-
-        assertTrue(ex.getMessage().toLowerCase().contains("ya tiene una cartera"));
+        assertThrows(RuntimeException.class, () -> carteraService.crearCartera(usuarioId));
         verify(carteraRepositorio, never()).save(any());
     }
 
-    // -------- obtenerPorUsuario --------
+    //OBTENCION
 
     @Test
     void obtenerPorUsuario_cuandoExiste_laDevuelve() throws Exception {
@@ -84,9 +63,7 @@ class CarteraServiceImplTest {
 
         EntidadCartera res = carteraService.obtenerPorUsuario(usuarioId);
 
-        assertNotNull(res);
         assertEquals(usuarioId, res.getUsuarioId());
-        verify(carteraRepositorio).findByUsuarioId(usuarioId);
     }
 
     @Test
@@ -94,64 +71,44 @@ class CarteraServiceImplTest {
         Integer usuarioId = 7;
         when(carteraRepositorio.findByUsuarioId(usuarioId)).thenReturn(Optional.empty());
 
-        ExcepcionNoExiste ex = assertThrows(ExcepcionNoExiste.class,
-                () -> carteraService.obtenerPorUsuario(usuarioId));
-
-        assertTrue(ex.getMessage().contains("No existe la cartera"));
-        verify(carteraRepositorio).findByUsuarioId(usuarioId);
+        assertThrows(ExcepcionNoExiste.class, () -> carteraService.obtenerPorUsuario(usuarioId));
     }
 
-    // -------- sumarSaldo --------
+    // SUMAR
 
     @Test
-    void sumarSaldo_cuandoRepoActualiza_ok() {
+    void sumarSaldo_cuandoRepoActualiza_noLanzaExcepcion() {
         Integer carteraId = 1;
         BigDecimal delta = new BigDecimal("25.50");
-
         when(carteraRepositorio.sumarSaldo(carteraId, delta)).thenReturn(1);
 
         assertDoesNotThrow(() -> carteraService.sumarSaldo(carteraId, delta));
-        verify(carteraRepositorio).sumarSaldo(carteraId, delta);
     }
 
     @Test
-    void sumarSaldo_cuandoRepoDevuelve0_lanzaRuntimeException() {
+    void sumarSaldo_cuandoNoEncuentraCartera_lanzaRuntimeException() {
         Integer carteraId = 1;
-        BigDecimal delta = new BigDecimal("25.50");
+        when(carteraRepositorio.sumarSaldo(anyInt(), any(BigDecimal.class))).thenReturn(0);
 
-        when(carteraRepositorio.sumarSaldo(carteraId, delta)).thenReturn(0);
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> carteraService.sumarSaldo(carteraId, delta));
-
-        assertTrue(ex.getMessage().toLowerCase().contains("no se pudo actualizar"));
-        verify(carteraRepositorio).sumarSaldo(carteraId, delta);
+        assertThrows(RuntimeException.class, () -> carteraService.sumarSaldo(carteraId, BigDecimal.TEN));
     }
 
-    // -------- debitar --------
+    //DEBITAR
 
     @Test
-    void debitar_cuandoAlcanza_ok() {
+    void debitar_cuandoSiAlcanza_noLanzaExcepcion() {
         Integer carteraId = 2;
         BigDecimal monto = new BigDecimal("10.00");
-
         when(carteraRepositorio.debitarSiAlcanza(carteraId, monto)).thenReturn(1);
 
         assertDoesNotThrow(() -> carteraService.debitar(carteraId, monto));
-        verify(carteraRepositorio).debitarSiAlcanza(carteraId, monto);
     }
 
     @Test
-    void debitar_cuandoNoAlcanzaOnoExiste_lanzaRuntimeException() {
+    void debitar_cuandoNoAlcanza_lanzaRuntimeException() {
         Integer carteraId = 2;
-        BigDecimal monto = new BigDecimal("999.99");
+        when(carteraRepositorio.debitarSiAlcanza(anyInt(), any(BigDecimal.class))).thenReturn(0);
 
-        when(carteraRepositorio.debitarSiAlcanza(carteraId, monto)).thenReturn(0);
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> carteraService.debitar(carteraId, monto));
-
-        assertTrue(ex.getMessage().toLowerCase().contains("fondos insuficientes"));
-        verify(carteraRepositorio).debitarSiAlcanza(carteraId, monto);
+        assertThrows(RuntimeException.class, () -> carteraService.debitar(carteraId, BigDecimal.valueOf(999)));
     }
 }

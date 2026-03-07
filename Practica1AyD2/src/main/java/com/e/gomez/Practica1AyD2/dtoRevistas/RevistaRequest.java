@@ -4,6 +4,7 @@
  */
 package com.e.gomez.Practica1AyD2.dtoRevistas;
 
+import java.time.LocalDate;
 import lombok.Data;
 
 /**
@@ -16,5 +17,8 @@ public class RevistaRequest {
     private String titulo;
     private String descripcion;
     private Integer categoriaId;
-    private String fechaCreacion; // Formato YYYY-MM-DD
+    private LocalDate fechaCreacion; // Formato YYYY-MM-DD
+    private boolean permiteLikes;
+    private boolean permiteSuscripciones;
+    private boolean permiteComentarios;
 }

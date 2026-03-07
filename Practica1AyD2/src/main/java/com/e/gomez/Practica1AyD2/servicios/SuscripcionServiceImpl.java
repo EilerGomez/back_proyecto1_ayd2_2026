@@ -11,7 +11,10 @@ import com.e.gomez.Practica1AyD2.dtoSuscripciones.dtoRevistasPorSuscripcionByUsu
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
+import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.SuscripcionRepositorio;
 import java.time.LocalDate;
@@ -30,12 +33,14 @@ public class SuscripcionServiceImpl implements SuscripcionService {
     private final RevistaRepositorio revistaRepo;
     private final RevistaService servicioRevista;
     private final UsuarioService usuarioService;
+    private final PerfilRepositorio perfilRepo;
     public SuscripcionServiceImpl(SuscripcionRepositorio repo, RevistaRepositorio revistaRepo,
-            RevistaService servicioRevista,UsuarioService usuarioService) {
+            RevistaService servicioRevista,UsuarioService usuarioService,PerfilRepositorio perfilRepo) {
         this.repo = repo;
         this.revistaRepo = revistaRepo;
         this.servicioRevista=servicioRevista;
         this.usuarioService=usuarioService;
+        this.perfilRepo=perfilRepo;
     }
 
     @Override
@@ -50,8 +55,9 @@ public class SuscripcionServiceImpl implements SuscripcionService {
         s.setUsuarioId(sr.getUsuarioId());
         s.setFechaSuscripcion(sr.getFechaSuscripcion());
         s.setActiva(sr.isActiva());
-        
-        return new SuscricpionResponseByRevistaId(repo.save(s),new UsuarioResponse(usuarioService.getById(sr.getUsuarioId())));
+        EntidadUsuario eu = usuarioService.getById(sr.getUsuarioId());
+        EntidadPerfil ep = perfilRepo.getByUsuarioId(eu.getId());
+        return new SuscricpionResponseByRevistaId(repo.save(s),new UsuarioResponse(eu,ep));
     }
 
     @Override
@@ -76,7 +82,9 @@ public class SuscripcionServiceImpl implements SuscripcionService {
         List<EntidadSuscripcion> dtos = repo.findByRevistaId(revistaId);
         List<SuscricpionResponseByRevistaId> respo=new ArrayList<>();
         for (EntidadSuscripcion es : dtos) {
-            UsuarioResponse ur = new UsuarioResponse(usuarioService.getById(es.getUsuarioId()));
+            EntidadUsuario eu = usuarioService.getById(es.getUsuarioId());
+            EntidadPerfil ep = perfilRepo.getByUsuarioId(eu.getId());
+            UsuarioResponse ur = new UsuarioResponse(eu,ep);
             SuscricpionResponseByRevistaId srr = new SuscricpionResponseByRevistaId(es,ur);
             respo.add(srr);
         }

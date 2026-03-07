@@ -12,12 +12,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioCompradoDetalleDTO;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;      // 
 import com.e.gomez.Practica1AyD2.modelos.EntidadTipoAnuncio;  // 
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;      //
 import com.e.gomez.Practica1AyD2.modelos.EntidadPrecioAnuncio;// 
 import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.Modifying;
 
 /**
  *
@@ -26,8 +28,8 @@ import java.time.LocalDateTime;
 public interface CompraAnuncioRepositorio extends JpaRepository<EntidadCompraAnuncio, Integer> {
     List<EntidadCompraAnuncio> findByEstado(String estado);
     List<EntidadCompraAnuncio> findByDesactivadoPor(String desactivadoPor);
-    
-    
+    List<EntidadCompraAnuncio> findByAnuncianteId(Integer anuncianteId) throws ExcepcionNoExiste;
+    List<EntidadCompraAnuncio> findByAnuncioId(Integer anuncioId) throws ExcepcionNoExiste;
     
     @Query("SELECT new com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioCompradoDetalleDTO(" +
                "ca.anuncioId, t.codigo, u.username, pr.precio, ca.fechaInicio) " +
@@ -60,4 +62,9 @@ public interface CompraAnuncioRepositorio extends JpaRepository<EntidadCompraAnu
         @Param("inicio") LocalDateTime inicio, 
         @Param("fin") LocalDateTime fin);
     
+    @Modifying
+    @Query("UPDATE EntidadCompraAnuncio c SET c.estado = 'EXPIRADO', c.desactivadoPor = 'SISTEMA' " +
+           "WHERE c.estado = 'ACTIVO' AND c.fechaFin < :ahora")
+    int expirarComprasVencidas(@Param("ahora") LocalDateTime ahora);
+
 }

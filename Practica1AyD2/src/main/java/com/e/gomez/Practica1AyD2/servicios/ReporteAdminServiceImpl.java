@@ -8,6 +8,7 @@ import com.e.gomez.Practica1AyD2.dtoAnuncios.AnuncioResponse;
 import com.e.gomez.Practica1AyD2.dtoAnuncios.TipoAnuncioResponse;
 import com.e.gomez.Practica1AyD2.dtoEdicion.EdicionResponse;
 import com.e.gomez.Practica1AyD2.dtoEtiquetas.EtiquetaResponse;
+import com.e.gomez.Practica1AyD2.dtoPagosyCostos.HistorialCostoResponse;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncianteEfectividadDTO;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioCompradoDetalleDTO;
 import com.e.gomez.Practica1AyD2.dtoReportesAdmin.AnuncioEfectividadDetalleDTO;
@@ -27,11 +28,15 @@ import com.e.gomez.Practica1AyD2.dtoReportesEditor.SuscripcionDetalleDTO;
 import com.e.gomez.Practica1AyD2.dtoRevistas.RevistaResponse;
 
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
+import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCategoria;
 import com.e.gomez.Practica1AyD2.modelos.EntidadComentario;
 import com.e.gomez.Practica1AyD2.modelos.EntidadCompraAnuncio;
+import com.e.gomez.Practica1AyD2.modelos.EntidadHistorialCosto;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPagoRevista;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
+import com.e.gomez.Practica1AyD2.modelos.EntidadPrecioAnuncio;
 import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
@@ -41,9 +46,11 @@ import com.e.gomez.Practica1AyD2.repositorios.ComentarioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.CompraAnuncioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.EdicionRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.EtiquetaRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.HistorialCostoRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.ImpresionAnuncioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.LikeRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.PagoRevistaRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.PrecioAnuncioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.RevistaEtiquetaRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
@@ -55,6 +62,7 @@ import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -82,13 +90,15 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
     private final EdicionRepositorio edicionRepo;
     private final LikeRepositorio likeRepo;
     private final CategoriaRepositorio cartegoriaRepo;
+    private final PerfilRepositorio perfilRepo;
+    private final HistorialCostoRepositorio historialRepo;
     
     @Autowired
     public ReporteAdminServiceImpl(PagoRevistaRepositorio pagoRepo,AnuncioRepositorio anuncioRepo, ImpresionAnuncioRepositorio impresionRepo,
              RevistaRepositorio revistaRepo,CompraAnuncioRepositorio compraRepo,PrecioAnuncioRepositorio precioAnuncioRepo, UsuarioRepositorio usuarioRepo,
              TipoAnuncioRepositorio tipoAnuncioRepo,SuscripcionRepositorio suscripcinRepo,ComentarioRepositorio comentarioRepo,
                RevistaEtiquetaRepositorio revEtiqRepo, EtiquetaRepositorio etiqRepo,EdicionRepositorio edicionRepo,LikeRepositorio likeRepo,
-               CategoriaRepositorio cartegoriaRepo){
+               CategoriaRepositorio cartegoriaRepo,PerfilRepositorio perfilService,HistorialCostoRepositorio historialRepo){
         this.pagoRepo=pagoRepo;
         this.anuncioRepo=anuncioRepo;
         this.impresionRepo=impresionRepo;
@@ -104,48 +114,82 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
         this.edicionRepo=edicionRepo;
         this.likeRepo=likeRepo;
         this.cartegoriaRepo=cartegoriaRepo;
+        this.perfilRepo=perfilService;
+        this.historialRepo=historialRepo;
     }
 
     @Override
-    public ReporteGananciasMaestroDTO reporteGanancias(LocalDate inicio, LocalDate fin) {
-       
+    public ReporteGananciasMaestroDTO reporteGanancias(LocalDate inicio, LocalDate fin) throws ExcepcionNoExiste{
+
         LocalDateTime inicioDT = (inicio != null) ? inicio.atStartOfDay() : null;
         LocalDateTime finDT = (fin != null) ? fin.atTime(23, 59, 59) : null;
 
-        
-        List<AnuncioCompradoDetalleDTO> anuncios = compraRepo.listarAnunciosComprados(inicioDT, finDT);
-
-        
         List<EntidadRevista> revistas = revistaRepo.findAll();
+        
         List<ReporteGananciaRevistaDTO> reporteRevistas = revistas.stream().map(r -> {
-            // Ingresos de Editores
+
+            
             BigDecimal ingresosEditor = pagoRepo.sumMontoByRevista(r.getId(), inicio, fin);
             ingresosEditor = (ingresosEditor != null) ? ingresosEditor : BigDecimal.ZERO;
 
-            
-            BigDecimal ingresosAds = impresionRepo.sumIngresosAnunciosPorRevista(r.getId(), inicioDT, finDT);
-            ingresosAds = (ingresosAds != null) ? ingresosAds : BigDecimal.ZERO;
 
             
-            BigDecimal costo = calcularCostoOperativo(r.getId(), inicio, fin);
 
-            BigDecimal totalIngreso = ingresosEditor.add(ingresosAds);
+            // 5. historial de costos de esa revista
+            List<HistorialCostoResponse> costos = new ArrayList<>();
+            try {
+                costos = historialRepo.findByRevistaId(r.getId())
+                        .stream()
+                        .map(c->{
+                            return new HistorialCostoResponse(c);
+                        })
+                        .toList();
+            } catch (ExcepcionNoExiste ex) {
+                System.getLogger(ReporteAdminServiceImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+            
+
             return new ReporteGananciaRevistaDTO(
-                r.getId(), r.getTitulo(), ingresosEditor, ingresosAds, costo, 
-                totalIngreso, totalIngreso.subtract(costo)
+                    r.getId(),
+                    r.getTitulo(),
+                    ingresosEditor,
+                    costos
             );
         }).toList();
 
-        
-        BigDecimal globalIngresos = reporteRevistas.stream().map(ReporteGananciaRevistaDTO::getTotalIngreso).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal globalCostos = reporteRevistas.stream().map(ReporteGananciaRevistaDTO::getCostoMantenimiento).reduce(BigDecimal.ZERO, BigDecimal::add);
+            List<ReporteAnunciosCompradosDTO> anunciosComprados =
+                    reporteAnunciosComprados(null,inicioDT, finDT);
+            
+            BigDecimal globalIngresosEditores = reporteRevistas.stream()
+            .map(ReporteGananciaRevistaDTO::getIngresosPagosEditor)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            
+            BigDecimal totalMontoAnuncios = anunciosComprados.stream()
+            .map(ReporteAnunciosCompradosDTO::getMontoPagado)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+       
+            BigDecimal globalGanancias = globalIngresosEditores.add(totalMontoAnuncios);
+            
+            BigDecimal globalCostos = reporteRevistas.stream()
+            .flatMap(r -> r.getCostos().stream())
+            .map(HistorialCostoResponse::getCostoPorDia)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal ingresosAds = anunciosComprados
+                    .stream()
+                    .map(ReporteAnunciosCompradosDTO::getMontoPagado)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            ingresosAds = (ingresosAds != null) ? ingresosAds : BigDecimal.ZERO;
+
 
         return new ReporteGananciasMaestroDTO(
-            reporteRevistas, 
-            anuncios, 
-            globalIngresos, 
-            globalCostos, 
-            globalIngresos.subtract(globalCostos)
+                reporteRevistas,
+                anunciosComprados,
+                globalCostos,
+                globalIngresosEditores,
+                globalGanancias,
+                totalMontoAnuncios
         );
     }
     
@@ -171,7 +215,7 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
     }
 
     @Override
-    public List<ReporteAnunciosCompradosDTO> reporteAnunciosComprados(String tipo, LocalDateTime inicio, LocalDateTime fin) {
+    public List<ReporteAnunciosCompradosDTO> reporteAnunciosComprados(String tipo, LocalDateTime inicio, LocalDateTime fin) throws ExcepcionNoExiste{
         // 1. Obtener las entidades de compra filtradas
         List<EntidadCompraAnuncio> compras = compraRepo.buscarComprasConFiltros(tipo, inicio, fin);
 
@@ -179,15 +223,14 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
         return compras.stream().map(ca -> {
             // Buscamos el anuncio
             EntidadAnuncio anuncio = anuncioRepo.findById(ca.getAnuncioId()).orElseThrow();
-            
-            // Obtenemos el precio (monto pagado) de la tabla de precios
-            BigDecimal precio = precioAnuncioRepo.findByTipoAnuncioIdAndActivoTrue(anuncio.getTipoAnuncioId())
-                    .map(p -> p.getPrecio()).orElse(BigDecimal.ZERO);
+            EntidadPrecioAnuncio p = precioAnuncioRepo.getById(ca.getPrecioId());
+            BigDecimal precio =p.getPrecio();
 
             EntidadUsuario eu = usuarioRepo.getById(anuncio.getAnuncianteId());
-            UsuarioResponse ur = new UsuarioResponse(eu);
+            EntidadPerfil ep = perfilRepo.getByUsuarioId(eu.getId());
+            UsuarioResponse ur = new UsuarioResponse(eu,ep);
             TipoAnuncioResponse tar = new TipoAnuncioResponse(tipoAnuncioRepo.findById(anuncio.getTipoAnuncioId()).orElseThrow());
-            // Construimos tu AnuncioResponse (Necesitas tus metodos helpers para Usuario y Tipo)
+            // Construimos tu AnuncioResponse 
             AnuncioResponse anuncioResp = new AnuncioResponse(
                 anuncio,
                 ur, 
@@ -205,20 +248,27 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
     }
     @Override
     public ReporteGananciasAnuncianteMaestroDTO reporteGananciasPorAnunciante(Integer anuncianteId, LocalDateTime inicio, LocalDateTime fin) {
+        // 1. Obtener la lista plana de anuncios desde el repositorio
         List<AnuncioCompradoDetalleDTO> todosLosAnuncios = compraRepo.listarAnunciosComprados(inicio, fin);
 
+        // 2. Agrupar por nombre de anunciante
         Map<String, List<AnuncioCompradoDetalleDTO>> agrupado = todosLosAnuncios.stream()
                 .collect(Collectors.groupingBy(AnuncioCompradoDetalleDTO::getAnunciante));
 
+        // 3. Transformar el mapa: Aquí es donde "ya debe sumar" el monto por cada grupo
         List<DetalleAnuncianteDTO> anunciantes = agrupado.entrySet().stream().map(entry -> {
-            BigDecimal totalAnunciante = entry.getValue().stream()
-                    .map(AnuncioCompradoDetalleDTO::getMontoPagado)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            String nombreAnunciante = entry.getKey();
+            List<AnuncioCompradoDetalleDTO> listaAnuncios = entry.getValue();
 
-            return new DetalleAnuncianteDTO(entry.getKey(), entry.getValue(), totalAnunciante);
+            // SUMA DE MONTOS: Sumamos el montoPagado de todos los anuncios de este anunciante
+            BigDecimal totalAnunciante = listaAnuncios.stream()
+                    .map(AnuncioCompradoDetalleDTO::getMontoPagado)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add); //
+
+            return new DetalleAnuncianteDTO(nombreAnunciante, listaAnuncios, totalAnunciante);
         }).toList();
 
-        
+        // 4. Calcular el Gran Total global sumando los totales de cada anunciante
         BigDecimal granTotal = anunciantes.stream()
                 .map(DetalleAnuncianteDTO::getTotalInvertido)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -279,38 +329,52 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
     }
     
     @Override
-    public ReporteEfectividadMaestroDTO reporteEfectividadAnuncios(LocalDateTime inicio, LocalDateTime fin) {
-        List<Object[]> resultados = impresionRepo.contarVistasPorAnuncioYRevista(inicio, fin);
+public ReporteEfectividadMaestroDTO reporteEfectividadAnuncios(LocalDateTime inicio, LocalDateTime fin) {
+    List<Object[]> resultados = impresionRepo.contarVistasPorAnuncioYRevista(inicio, fin);
 
-        List<AnuncioEfectividadDetalleDTO> listaPlana = resultados.stream().map(row -> {
-            Integer anuncioId = (Integer) row[0];
-            Integer revistaId = (Integer) row[1];
-            String urlMostrada = (String) row[2]; 
-            Long vistas = (Long) row[3];         
+    List<AnuncioEfectividadDetalleDTO> listaPlana = resultados.stream().map(row -> {
+        // Uso de Number para evitar ClassCastException en IDs
+        Integer anuncioId = ((Number) row[0]).intValue();
+        Integer revistaId = ((Number) row[1]).intValue();
+        
+        // CORRECCIÓN ArrayIndexOutOfBounds: 
+        // Si row tiene solo 3 elementos, el conteo está en row[2]. 
+        // Si tiene 4, el conteo está en row[3] y la URL en row[2].
+        String urlMostrada = "N/A";
+        Long vistas = 0L;
 
-            EntidadAnuncio anuncio = anuncioRepo.findById(anuncioId).orElseThrow();
-            RevistaResponse revistaResp = construirRevistaResponseCompleta(revistaId);
+        if (row.length >= 4) {
+            urlMostrada = String.valueOf(row[2]); 
+            vistas = ((Number) row[3]).longValue();
+        } else if (row.length == 3) {
+            // Caso probable: row[0]=anuncioId, row[1]=revistaId, row[2]=conteo
+            vistas = ((Number) row[2]).longValue();
+        }
 
-            return new AnuncioEfectividadDetalleDTO(
-                anuncioId, 
-                anuncio.getTexto(), 
-                vistas, 
-                urlMostrada, 
-                revistaResp
-            );
-        }).toList();
+        EntidadAnuncio anuncio = anuncioRepo.findById(anuncioId).orElseThrow();
+        RevistaResponse revistaResp = construirRevistaResponseCompleta(revistaId);
 
-        Map<String, List<AnuncioEfectividadDetalleDTO>> agrupado = listaPlana.stream()
-            .collect(Collectors.groupingBy(dto -> {
-                EntidadAnuncio a = anuncioRepo.findById(dto.getAnuncioId()).get();
-                return usuarioRepo.findById(a.getAnuncianteId()).get().getUsername();
-            }));
+        return new AnuncioEfectividadDetalleDTO(
+            anuncioId, 
+            anuncio.getTexto(), 
+            vistas, 
+            urlMostrada, 
+            revistaResp
+        );
+    }).toList();
 
-        List<AnuncianteEfectividadDTO> anunciantesDTO = agrupado.entrySet().stream()
-            .map(entry -> new AnuncianteEfectividadDTO(entry.getKey(), entry.getValue()))
-            .toList();
+    // Agrupación (Igual que antes)
+    Map<String, List<AnuncioEfectividadDetalleDTO>> agrupado = listaPlana.stream()
+        .collect(Collectors.groupingBy(dto -> {
+            EntidadAnuncio a = anuncioRepo.findById(dto.getAnuncioId()).get();
+            return usuarioRepo.findById(a.getAnuncianteId()).get().getUsername();
+        }));
 
-        return new ReporteEfectividadMaestroDTO(anunciantesDTO);
+    List<AnuncianteEfectividadDTO> anunciantesDTO = agrupado.entrySet().stream()
+        .map(entry -> new AnuncianteEfectividadDTO(entry.getKey(), entry.getValue()))
+        .toList();
+
+    return new ReporteEfectividadMaestroDTO(anunciantesDTO);
 }
 
     private RevistaResponse construirRevistaResponseCompleta(Integer revistaId) {
@@ -335,6 +399,9 @@ public class ReporteAdminServiceImpl implements ReporteAdminService{
         int cantidadLikes = likeRepo.countByRevistaId(r.getId());
         EntidadCategoria categoria = cartegoriaRepo.getById(r.getCategoriaId());
         EntidadUsuario editor = usuarioRepo.findById(r.getEditorId()).orElseThrow();
-        return new RevistaResponse(r, tags, edics,cantidadComentarios,cantidadLikes,cantidadSuscripciones,categoria,editor);
+        EntidadPerfil perfil = perfilRepo.getByUsuarioId(editor.getId());
+        return new RevistaResponse(r, tags, edics,cantidadComentarios,cantidadLikes,cantidadSuscripciones,categoria,editor,perfil);
     }
+
+
 }

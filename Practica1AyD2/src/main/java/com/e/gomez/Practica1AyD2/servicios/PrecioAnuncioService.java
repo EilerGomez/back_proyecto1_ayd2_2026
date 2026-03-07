@@ -17,5 +17,6 @@ public interface PrecioAnuncioService {
     PrecioAnuncioResponse crear(PrecioAnuncioRequest req) throws ExcepcionNoExiste;
     List<PrecioAnuncioResponse> listarTodos();
     PrecioAnuncioResponse obtenerPorId(Integer id) throws ExcepcionNoExiste;
+    List<PrecioAnuncioResponse > obtenerPorTipoAnuncio(Integer anuncioId) throws ExcepcionNoExiste;
     void desactivar(Integer id) throws ExcepcionNoExiste;
 }
