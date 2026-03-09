@@ -48,7 +48,7 @@ public class SuscripcionController {
         return ResponseEntity.ok(suscripcionService.listarPorRevista(revistaId));
     }
 
-    // --- CAMBIAR ESTADO (Activar/Desactivar) ---
+    // --- CAMBIAR ESTADO 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Void> cambiarEstado(@PathVariable Integer id, @RequestParam boolean activa) throws ExcepcionNoExiste {
         suscripcionService.cambiarEstado(id, activa);

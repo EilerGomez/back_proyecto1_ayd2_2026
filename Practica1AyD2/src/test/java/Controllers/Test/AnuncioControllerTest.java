@@ -62,7 +62,7 @@ public class AnuncioControllerTest extends CommonMvcTest {
 
         // Act
         mockMvc.perform(post("/v1/anuncios")
-                .with(csrf()) // Necesario para evitar 403
+                .with(csrf()) 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 // Assert
@@ -101,7 +101,7 @@ public class AnuncioControllerTest extends CommonMvcTest {
     public void testCambiarEstado() throws Exception {
         // Act
         mockMvc.perform(patch("/v1/anuncios/{id}/estado", ANUNCIO_ID)
-                .param("nuevoEstado", "VENCIDO") // Simulación del @RequestParam
+                .param("nuevoEstado", "VENCIDO")
                 .with(csrf()))
                 // Assert
                 .andExpect(status().isNoContent());

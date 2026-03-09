@@ -10,9 +10,16 @@ package com.e.gomez.Practica1AyD2.dtoEtiquetas;
  */
 
 import com.e.gomez.Practica1AyD2.modelos.EntidadEtiqueta;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class EtiquetaResponse {
     private int id;
     private String nombre;

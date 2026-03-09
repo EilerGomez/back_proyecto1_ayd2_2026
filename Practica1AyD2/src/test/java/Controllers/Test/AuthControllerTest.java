@@ -53,7 +53,7 @@ public class AuthControllerTest extends CommonMvcTest {
 
         // Act y Assert
         mockMvc.perform(post("/v1/auth/login")
-                .with(csrf()) // Prevenir 403
+                .with(csrf()) 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())

@@ -146,6 +146,31 @@
                                 </execution>
                             </executions>
                         </plugin>
+                        <plugin>
+                            <groupId>com.microsoft.azure</groupId>
+                            <artifactId>azure-webapp-maven-plugin</artifactId>
+                            <version>2.13.0</version>
+                            <configuration>
+                                <schemaVersion>v2</schemaVersion>
+                                <resourceGroup>BaseDatosMYSQLAyD22026</resourceGroup>
+                                <appName>backend-ayd2-proyecto1</appName>
+                                <region>westus2</region> <runtime>
+                                    <os>linux</os>
+                                    <javaVersion>Java 17</javaVersion>
+                                    <webContainer>Java SE</webContainer>
+                                </runtime>
+                                <deployment>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/target</directory>
+                                            <includes>
+                                                <include>Practica1AyD2-0.0.1-SNAPSHOT.jar</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </deployment>
+                            </configuration>
+                        </plugin>
 		</plugins>
 	</build>
 

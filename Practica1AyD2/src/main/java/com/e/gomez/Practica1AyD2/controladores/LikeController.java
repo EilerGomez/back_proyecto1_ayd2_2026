@@ -33,7 +33,7 @@
         //
         @PostMapping
         public ResponseEntity<LikeResponse> darLike(@RequestBody LikeRequest request) throws ExcepcionNoExiste, ExcepcionEntidadDuplicada {
-            // Retorna 201 Created con el objeto Like y el Usuario anidado
+           
             return ResponseEntity.status(HttpStatus.CREATED).body(likeService.darLike(request));
         }
 

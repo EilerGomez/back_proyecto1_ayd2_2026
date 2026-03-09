@@ -41,20 +41,20 @@ public class PrecioAnuncioController {
         return ResponseEntity.ok(precioAnuncioService.listarTodos());
     }
 
-    // --- OBTENER POR ID ---
+    // --- OBTENER POR ID 
     @GetMapping("/{id}")
     public ResponseEntity<PrecioAnuncioResponse> obtenerPorId(@PathVariable Integer id) throws ExcepcionNoExiste {
         return ResponseEntity.ok(precioAnuncioService.obtenerPorId(id));
     }
 
-    // --- DESACTIVAR PRECIO ---
+    // --- DESACTIVAR PRECIO 
     @PatchMapping("/{id}/desactivar")
     public ResponseEntity<Void> desactivar(@PathVariable Integer id) throws ExcepcionNoExiste {
         precioAnuncioService.desactivar(id);
         return ResponseEntity.noContent().build();
     }
     
-    // --- LISTAR POR TIPO DE ANUNCIO ---
+    // --- LISTAR POR TIPO DE ANUNCIO 
     @GetMapping("/tipo/{tipoAnuncioId}")
     public ResponseEntity<List<PrecioAnuncioResponse>> obtenerPorTipoAnuncio(@PathVariable Integer tipoAnuncioId) throws ExcepcionNoExiste {
         return ResponseEntity.ok(precioAnuncioService.obtenerPorTipoAnuncio(tipoAnuncioId));

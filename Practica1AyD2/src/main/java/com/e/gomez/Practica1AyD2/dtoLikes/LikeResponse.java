@@ -7,13 +7,20 @@ package com.e.gomez.Practica1AyD2.dtoLikes;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.modelos.EntidadLike;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
 /**
  *
  * @author eiler
  */
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class LikeResponse {
     int id;
     int revistaId;
