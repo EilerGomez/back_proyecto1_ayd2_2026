@@ -12,6 +12,7 @@ import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
@@ -49,7 +50,11 @@ public class SuscripcionServiceImpl implements SuscripcionService {
         if (repo.existsByRevistaIdAndUsuarioId(sr.getRevistaId(), sr.getUsuarioId())) {
             throw new ExcepcionEntidadDuplicada("Ya existe una suscripción para este usuario en esta revista.");
         }
-        
+        EntidadRevista revista = revistaRepo.getById(sr.getRevistaId());
+        if(!revista.isPermiteSuscripciones()){
+            throw new ExcepcionEntidadDuplicada("No se permiten suscripciones.");
+
+        }
         EntidadSuscripcion s = new EntidadSuscripcion();
         s.setRevistaId(sr.getRevistaId());
         s.setUsuarioId(sr.getUsuarioId());

@@ -10,8 +10,10 @@ import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadLike;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.LikeRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,14 @@ public class LikeServiceImpl implements LikeService {
     private final LikeRepositorio repo;
     private final UsuarioService usuarioService;
     private final PerfilService perfilService;
+    private final RevistaRepositorio revistaRepo;
 
     @Autowired
-    public LikeServiceImpl(LikeRepositorio repo, UsuarioService usuarioService,PerfilService perfilService) {
+    public LikeServiceImpl(LikeRepositorio repo, UsuarioService usuarioService,PerfilService perfilService,RevistaRepositorio revistaRepo) {
         this.repo = repo; 
         this.usuarioService=usuarioService;
         this.perfilService=perfilService;
+        this.revistaRepo=revistaRepo;
     }
 
     @Override
@@ -41,6 +45,10 @@ public class LikeServiceImpl implements LikeService {
         if (this.yaDioLike(req.getRevistaId(), req.getUsuarioId())) {
         
             throw new ExcepcionEntidadDuplicada("Ya diste like a esta revista");
+        }
+        EntidadRevista revista = revistaRepo.getById(req.getRevistaId());
+        if(!revista.isPermiteLikes()){
+             throw new ExcepcionEntidadDuplicada("NO se permiten likes a esta revista");
         }
         EntidadLike l = new EntidadLike();
         l.setRevistaId(req.getRevistaId());

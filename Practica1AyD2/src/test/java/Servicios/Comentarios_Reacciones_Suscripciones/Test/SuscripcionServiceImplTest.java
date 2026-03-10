@@ -7,6 +7,7 @@ import com.e.gomez.Practica1AyD2.dtoSuscripciones.dtoRevistasPorSuscripcionByUsu
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionEntidadDuplicada;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadSuscripcion;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
@@ -39,13 +40,13 @@ public class SuscripcionServiceImplTest {
     @Mock
     private SuscripcionRepositorio repo;
     @Mock
-    private RevistaRepositorio revistaRepo; // Mock añadido
+    private RevistaRepositorio revistaRepo; 
     @Mock
     private RevistaService servicioRevista;
     @Mock
     private UsuarioService usuarioService;
     @Mock
-    private PerfilRepositorio perfilRepo; // Mock añadido
+    private PerfilRepositorio perfilRepo;
 
     @InjectMocks
     private SuscripcionServiceImpl service;
@@ -53,7 +54,8 @@ public class SuscripcionServiceImplTest {
     private EntidadSuscripcion suscripcionEjemplo;
     private SuscripcionRequest requestEjemplo;
     private EntidadUsuario usuarioEjemplo;
-    private EntidadPerfil perfilEjemplo; // Objeto para el mock
+    private EntidadPerfil perfilEjemplo;
+    private EntidadRevista revistaEjemplo; 
     private RevistaResponse revistaResponseEjemplo;
 
     @BeforeEach
@@ -67,6 +69,11 @@ public class SuscripcionServiceImplTest {
         perfilEjemplo = new EntidadPerfil();
         perfilEjemplo.setUsuarioId(10);
         perfilEjemplo.setFoto_url("http://test.com/foto.jpg");
+
+        // Datos de Revista (Entidad)
+        revistaEjemplo = new EntidadRevista();
+        revistaEjemplo.setId(5);
+        revistaEjemplo.setPermiteSuscripciones(true);
 
         // Datos de Suscripción
         suscripcionEjemplo = new EntidadSuscripcion();
@@ -83,42 +90,67 @@ public class SuscripcionServiceImplTest {
         requestEjemplo.setFechaSuscripcion(LocalDate.now());
         requestEjemplo.setActiva(true);
 
-        // Mock de RevistaResponse
+        // Mock de RevistaResponse (DTO)
         revistaResponseEjemplo = mock(RevistaResponse.class);
         when(revistaResponseEjemplo.getTitulo()).thenReturn("Revista Científica");
         
-        // Comportamiento global del Perfil (evita NullPointer en la mayoría de tests)
+        // Comportamiento global del Perfil
         when(perfilRepo.getByUsuarioId(10)).thenReturn(perfilEjemplo);
     }
 
     @Test
-    void suscribir_DeberiaGuardar_CuandoNoExisteDuplicado() throws Exception {
+    void suscribir_DeberiaGuardar_CuandoNoExisteDuplicadoYPermiteSuscripcion() throws Exception {
+        // Arrange
         when(repo.existsByRevistaIdAndUsuarioId(5, 10)).thenReturn(false);
+        when(revistaRepo.getById(5)).thenReturn(revistaEjemplo);
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
         when(repo.save(any(EntidadSuscripcion.class))).thenReturn(suscripcionEjemplo);
 
+        // Act
         SuscricpionResponseByRevistaId res = service.suscribir(requestEjemplo);
 
+        // Assert
         assertNotNull(res);
         assertEquals("lector1", res.getUsuario().getUsername());
         verify(repo).save(any(EntidadSuscripcion.class));
     }
 
     @Test
-    void suscribir_DeberiaLanzarExcepcion_CuandoYaExiste() {
+    void suscribir_DeberiaLanzarExcepcion_CuandoRevistaNoPermiteSuscripciones() {
+        // Arrange
+        revistaEjemplo.setPermiteSuscripciones(false);
+        when(repo.existsByRevistaIdAndUsuarioId(5, 10)).thenReturn(false);
+        when(revistaRepo.getById(5)).thenReturn(revistaEjemplo);
+
+        // Act & Assert
+        ExcepcionEntidadDuplicada ex = assertThrows(ExcepcionEntidadDuplicada.class, 
+            () -> service.suscribir(requestEjemplo));
+        
+        assertEquals("No se permiten suscripciones.", ex.getMessage());
+        verify(repo, never()).save(any());
+    }
+
+    @Test
+    void suscribir_DeberiaLanzarExcepcion_CuandoYaExisteSuscripcion() {
+        // Arrange
         when(repo.existsByRevistaIdAndUsuarioId(5, 10)).thenReturn(true);
 
+        // Act & Assert
         assertThrows(ExcepcionEntidadDuplicada.class, () -> service.suscribir(requestEjemplo));
+        verify(revistaRepo, never()).getById(anyInt());
         verify(repo, never()).save(any());
     }
 
     @Test
     void listarPorUsuario_DeberiaRetornarListaConRevistas() throws ExcepcionNoExiste {
+        // Arrange
         when(repo.findByUsuarioId(10)).thenReturn(List.of(suscripcionEjemplo));
         when(servicioRevista.getById(5)).thenReturn(revistaResponseEjemplo);
 
+        // Act
         List<dtoRevistasPorSuscripcionByUsuarioResponse> lista = service.listarPorUsuario(10);
 
+        // Assert
         assertFalse(lista.isEmpty());
         assertEquals(1, lista.size());
         assertEquals("Revista Científica", lista.get(0).getRevista().getTitulo());
@@ -126,11 +158,14 @@ public class SuscripcionServiceImplTest {
 
     @Test
     void listarPorRevista_DeberiaRetornarListaConUsuarios() throws ExcepcionNoExiste {
+        // Arrange
         when(repo.findByRevistaId(5)).thenReturn(List.of(suscripcionEjemplo));
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
 
+        // Act
         List<SuscricpionResponseByRevistaId> lista = service.listarPorRevista(5);
 
+        // Assert
         assertFalse(lista.isEmpty());
         assertEquals(1, lista.size());
         assertEquals("lector1", lista.get(0).getUsuario().getUsername());
@@ -139,17 +174,32 @@ public class SuscripcionServiceImplTest {
 
     @Test
     void cambiarEstado_DeberiaModificarBooleano() throws ExcepcionNoExiste {
+        // Arrange
         when(repo.findById(1)).thenReturn(Optional.of(suscripcionEjemplo));
 
+        // Act
         service.cambiarEstado(1, false);
 
+        // Assert
         assertFalse(suscripcionEjemplo.isActiva());
         verify(repo).save(suscripcionEjemplo);
     }
 
     @Test
+    void cambiarEstado_DeberiaLanzarExcepcion_SiNoExiste() {
+        // Arrange
+        when(repo.findById(anyInt())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ExcepcionNoExiste.class, () -> service.cambiarEstado(99, false));
+    }
+
+    @Test
     void cancelarSuscripcion_DeberiaLlamarDelete() {
+        // Act
         service.cancelarSuscripcion(1);
+        
+        // Assert
         verify(repo).deleteById(1);
     }
 }

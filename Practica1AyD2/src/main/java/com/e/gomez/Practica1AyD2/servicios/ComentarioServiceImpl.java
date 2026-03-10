@@ -9,9 +9,11 @@ import com.e.gomez.Practica1AyD2.dtoComentarios.ComentarioResponse;
 import com.e.gomez.Practica1AyD2.dtoUsuarios.UsuarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadComentario;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.ComentarioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +29,22 @@ public class ComentarioServiceImpl implements ComentarioService {
     private final ComentarioRepositorio repo;
     private final UsuarioService usuarioServicio;
     private final PerfilRepositorio perfilRepo;
+    private final RevistaRepositorio revistaRepo;
 
-    public ComentarioServiceImpl(ComentarioRepositorio repo,UsuarioService usuarioServicio,PerfilRepositorio perfilRepo){ 
+    public ComentarioServiceImpl(ComentarioRepositorio repo,UsuarioService usuarioServicio,PerfilRepositorio perfilRepo,RevistaRepositorio revistaRepo){ 
         this.repo = repo; 
         this.usuarioServicio=usuarioServicio;
         this.perfilRepo=perfilRepo;
+        this.revistaRepo=revistaRepo;
     }
 
     @Override
     @Transactional
     public ComentarioResponse crear(ComentarioRequest req)  throws ExcepcionNoExiste{
+        EntidadRevista revista = revistaRepo.getById(req.getRevistaId());
+        if(!revista.isPermiteComentarios()){
+            throw new ExcepcionNoExiste("No se permiten comentarios a esta revista");
+        }
         EntidadComentario c = new EntidadComentario();
         c.setRevistaId(req.getRevistaId());
         c.setUsuarioId(req.getUsuarioId());

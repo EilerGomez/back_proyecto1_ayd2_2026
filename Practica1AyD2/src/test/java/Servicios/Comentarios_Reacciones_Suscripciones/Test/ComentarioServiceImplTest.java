@@ -5,9 +5,11 @@ import com.e.gomez.Practica1AyD2.dtoComentarios.ComentarioResponse;
 import com.e.gomez.Practica1AyD2.excepciones.ExcepcionNoExiste;
 import com.e.gomez.Practica1AyD2.modelos.EntidadComentario;
 import com.e.gomez.Practica1AyD2.modelos.EntidadPerfil;
+import com.e.gomez.Practica1AyD2.modelos.EntidadRevista;
 import com.e.gomez.Practica1AyD2.modelos.EntidadUsuario;
 import com.e.gomez.Practica1AyD2.repositorios.ComentarioRepositorio;
 import com.e.gomez.Practica1AyD2.repositorios.PerfilRepositorio;
+import com.e.gomez.Practica1AyD2.repositorios.RevistaRepositorio;
 import com.e.gomez.Practica1AyD2.servicios.ComentarioServiceImpl;
 import com.e.gomez.Practica1AyD2.servicios.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,11 +39,15 @@ public class ComentarioServiceImplTest {
     @Mock
     private UsuarioService usuarioService;
 
+    @Mock
+    private RevistaRepositorio revistaRepo; 
+
     @InjectMocks
     private ComentarioServiceImpl service;
 
     private EntidadUsuario usuarioEjemplo;
     private EntidadPerfil perfilEjemplo;
+    private EntidadRevista revistaEjemplo;
     private EntidadComentario comentarioEjemplo;
     private ComentarioRequest requestEjemplo;
 
@@ -60,6 +66,10 @@ public class ComentarioServiceImplTest {
         perfilEjemplo.setFoto_url("http://test.com/foto.jpg");
         perfilEjemplo.setDescripcion("Bio de prueba");
 
+        revistaEjemplo = new EntidadRevista();
+        revistaEjemplo.setId(5);
+        revistaEjemplo.setPermiteComentarios(true); 
+
         comentarioEjemplo = new EntidadComentario();
         comentarioEjemplo.setId(1);
         comentarioEjemplo.setRevistaId(5);
@@ -71,8 +81,9 @@ public class ComentarioServiceImplTest {
     }
 
     @Test
-    void crear_DeberiaGuardarCorrectamente() throws ExcepcionNoExiste {
+    void crear_DeberiaGuardarCorrectamente_CuandoRevistaPermiteComentarios() throws ExcepcionNoExiste {
         // Arrange
+        when(revistaRepo.getById(5)).thenReturn(revistaEjemplo);
         when(usuarioService.getById(10)).thenReturn(usuarioEjemplo);
         when(perfilRepo.findByUsuarioId(10)).thenReturn(Optional.of(perfilEjemplo));
         when(repo.save(any(EntidadComentario.class))).thenReturn(comentarioEjemplo);
@@ -85,6 +96,18 @@ public class ComentarioServiceImplTest {
         assertEquals("Contenido original", res.getContenido());
         assertEquals("comentador", res.getUsuario().getUsername());
         verify(repo).save(any(EntidadComentario.class));
+    }
+
+    @Test
+    void crear_DeberiaLanzarExcepcion_CuandoRevistaNoPermiteComentarios() {
+        // Arrange
+        revistaEjemplo.setPermiteComentarios(false);
+        when(revistaRepo.getById(5)).thenReturn(revistaEjemplo);
+
+        // Act & Assert
+        ExcepcionNoExiste ex = assertThrows(ExcepcionNoExiste.class, () -> service.crear(requestEjemplo));
+        assertEquals("No se permiten comentarios a esta revista", ex.getMessage());
+        verify(repo, never()).save(any());
     }
 
     @Test
