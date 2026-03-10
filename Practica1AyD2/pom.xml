@@ -154,7 +154,8 @@
                                 <schemaVersion>v2</schemaVersion>
                                 <resourceGroup>BaseDatosMYSQLAyD22026</resourceGroup>
                                 <appName>backend-ayd2-proyecto1</appName>
-                                <region>westus2</region> <runtime>
+                                <region>centralus</region> 
+                                <runtime>
                                     <os>linux</os>
                                     <javaVersion>Java 17</javaVersion>
                                     <webContainer>Java SE</webContainer>
